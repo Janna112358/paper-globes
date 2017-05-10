@@ -1,0 +1,9 @@
+We want to project spherical images onto a polyhedron (e.g. icosahedron) and make a printable net of the surfaces of the polyhedron that you can cut out and fold/paste together to get some sort of paper globe.
+
+An idea for the projection of the spherical image onto polyhedron surfaces exists (see https://www.chiark.greenend.org.uk/~sgtatham/polypics/), but a description of the surfaces in a 3D coordinate system is needed.
+
+Ideas for images: map of constellations (map points and maybe lines)
+sky map of some data, for example LIGO sky localisation of a GW event
+
+Also needed is some way to "print" the surfaces of the polyhedra, and arrange them as a net that can be folded together once printed out. Would be nice to add some edged that can be used to glue the thing together.
+
