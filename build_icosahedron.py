@@ -81,7 +81,7 @@ for j, v in enumerate(VERT):
 #plt.show()
 
 chosen = projection.pick_face(np.array([0.5 * np.math.pi, 0.5 * np.math.pi + 0.1]), ICO)
-print "Chosen face id", chosen.ID
+print("Chosen face id: {0}".format(chosen.ID))
 
 f, s = projection.project_onto_ico([0.5 * np.math.pi, 0.5 * np.math.pi + 0.1], ICO)
 
