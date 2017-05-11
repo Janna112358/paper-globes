@@ -89,6 +89,8 @@ face_points = [[] for f in ICO]
 for n in range(num):
     p = np.array([circle_phi[n], circle_theta[n]])
     f, projp = projection.project_onto_ico(p, ICO)
-    face_points[f.ID - 1].append(projp)    
-    
+    face_points[f.ID - 1].append(projp)
+
+face19_points = face_points[18]
+face19 = ICO[18]
 
