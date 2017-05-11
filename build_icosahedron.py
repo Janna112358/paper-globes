@@ -92,4 +92,3 @@ for n in range(num):
     face_points[f.ID - 1].append(projp)    
     
 
-

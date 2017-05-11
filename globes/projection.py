@@ -166,8 +166,9 @@ def point_to_sphere(p):
     theta = np.arccos(z/r)
 
     return np.array([theta, phi])
-    
-def sphere_to_cart(p, r = 1.):
+
+
+def sphere_to_cart(p, r=1.):
     """
     Transforms point on the sphere to Cartesian coordinates
     
@@ -223,7 +224,8 @@ def pick_face(p, ICO):
             closest_face = f
 
     return closest_face
-    
+
+
 def project_to_face(p, face):
     """
     Projects a point on the sphere to the local coordinate system 
@@ -248,7 +250,8 @@ def project_to_face(p, face):
     y = np.dot(face.v, s - face.middle)
     
     return np.array([x, y])
-    
+
+
 def project_onto_ico(p, ICO):
     """
     Project a point on the sphere to the right surface of a given icosahedron
