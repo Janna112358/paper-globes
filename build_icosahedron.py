@@ -21,6 +21,8 @@ J = projection.Vertex(0, -2, 1, "J")
 K = projection.Vertex(0, 2, -1, "K")
 L = projection.Vertex(0, -2, -1, "L")
 
+VERT = [A, B, C, D, E, F, G, H, I, J, K, L]
+
 # All of our Faces for the icosahedron
 
 F1 = projection.Face([H, L, D], 1)
@@ -52,6 +54,12 @@ xi = np.zeros(20)
 yi = np.zeros(20)
 zi = np.zeros(20)
 
+xii = np.zeros(12)
+yii = np.zeros(12)
+zii = np.zeros(12)
+
+pmiddles = []
+
 
 for i,f in enumerate(ICO):
     f.calcSystem()
@@ -59,8 +67,16 @@ for i,f in enumerate(ICO):
     yi[i] = f.middle[1]
     zi[i] = f.middle[2]
     print("ID: {0} Middle Coordinates: {1}".format(f.ID, f.middle))
+    pmiddles.append(projection.point_to_sphere(f.middle))
+    
+for j, v in enumerate(VERT):
+    xii[j] = v.x
+    yii[j] = v.y
+    zii[j] = v.z
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(xi, yi, zi)
+ax.scatter(xi, yi, zi, c = 'b')
+ax.scatter(xii, yii, zii, c = 'r')
 plt.show()
+
