@@ -57,7 +57,7 @@ class Face(object):
         # pick first axis from middle to first vertex
         # pick second axis orthogonal to first and to normal
         self.u = self.middle - self.vertices[0].coordinates
-        self.v = np.outer(self.normal, self.u)
+        self.v = np.cross(self.normal, self.u)
 
 
 class Vertex(object):
@@ -225,4 +225,29 @@ def project_to_face(p, face):
     x = np.dot(face.u, s - face.middle)
     y = np.dot(face.v, s - face.middle)
     
-    return x, y
+    return np.array([x, y])
+    
+def project_onto_ico(p, ICO):
+    """
+    Project a point on the sphere to the right surface of a given icosahedron
+    
+    Arguments
+    ---------
+    p: Numpy Array
+        point (theta, phi) on the sphere to project
+    ICO: list
+        list of Face objects that form an icosahedron
+        
+    Returns
+    -------
+    face: Face
+        Face that the point is projected onto
+    Numpy Array:
+        point (x, y) the point in projected onto in the local coordinate system
+        of the sphere
+    """
+    
+    face = pick_face(p, ICO)
+    projp = project_to_face(p, face)
+    
+    return face, projp
