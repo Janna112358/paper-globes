@@ -11,13 +11,13 @@ def draw_face(points, face):
     local_vertices = face.calcLocalVertices()
 
     # the line below might not work, but we need to add [0.0, 0.0] to the very end of the numpy matrix
-    vertices = np.concatenate((local_vertices,[0.0, 0.0]))
+    vertices = np.concatenate((local_vertices, [0.0, 0.0]))
 
     # this is the mask to draw the triangle. the last line actually closes the poly
     codes = [Path.MOVETO,
-         Path.LINETO,
-         Path.LINETO,
-         Path.CLOSEPOLY,
+             Path.LINETO,
+             Path.LINETO,
+             Path.CLOSEPOLY,
          ]
     path = Path(vertices, codes)
 
