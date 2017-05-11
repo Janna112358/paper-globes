@@ -66,7 +66,7 @@ for i,f in enumerate(ICO):
     xi[i] = f.middle[0]
     yi[i] = f.middle[1]
     zi[i] = f.middle[2]
-    print("ID: {0} Middle Coordinates: {1}".format(f.ID, f.middle))
+    #print("ID: {0} Middle Coordinates: {1}".format(f.ID, f.middle))
     pmiddles.append(projection.point_to_sphere(f.middle))
     
 for j, v in enumerate(VERT):
@@ -74,9 +74,12 @@ for j, v in enumerate(VERT):
     yii[j] = v.y
     zii[j] = v.z
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.scatter(xi, yi, zi, c = 'b')
-ax.scatter(xii, yii, zii, c = 'r')
-plt.show()
+#fig = plt.figure()
+#ax = fig.add_subplot(111, projection='3d')
+#ax.scatter(xi, yi, zi, c = 'b')
+#ax.scatter(xii, yii, zii, c = 'r')
+#plt.show()
+
+chosen = projection.pick_face(np.array([0.01, 0.01 + np.pi * 0.22]), ICO)
+print "Chosen face id", chosen.ID
 

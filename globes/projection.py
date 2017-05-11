@@ -112,24 +112,36 @@ def point_to_sphere(p):
     Arguments
     ---------
     p: Numpy Array
-        x, y, z
+        x, y, z in Cartesian coordinates
 
     Returns
     -------
     Numpy Array
         theta, phi
+        theta ranges from 0 (North pole) to (and including) pi (South pole)
+        phi ranges from 0 (positive x-axis) to (but not including) 2 pi,
+        increasing anti-clockwise when looking down on the plane from the top
     """
 
     r = np.sqrt(np.dot(p, p))
     if r == 0:
         print("Error: r should'nt be 0")
         return None
+        
+    x = p[0]
+    y = p[1]
+    z = p[2]
 
-    if p[0] == 0:
-        phi = np.pi/2
-    else:
-        phi = np.arctan(p[1]/p[0])
-    theta = np.arccos(p[2]/r)
+    if x > 0 and y >= 0:
+        phi = np.arctan(y / x)
+    elif x <= 0 and y > 0:
+        phi = np.arctan(np.abs(x) / y) + math.pi*0.5
+    elif x < 0 and y <= 0:
+        phi = np.arctan(np.abs(y) / np.abs(x)) + math.pi
+    elif x >= 0 and y < 0:
+        phi = np.arctan(x / np.abs(y)) + math.pi*1.5
+        
+    theta = np.arccos(z/r)
 
     return np.array([theta, phi])
 
