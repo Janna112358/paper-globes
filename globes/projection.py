@@ -107,7 +107,6 @@ class Vertex(object):
 
 def point_to_sphere(p):
     """
-
     Projects an input coordinates to the spherical surface.
 
     Arguments
@@ -133,3 +132,35 @@ def point_to_sphere(p):
     theta = np.arccos(p[2]/r)
 
     return np.array([theta, phi])
+
+
+def pick_face(p, ICO):
+    """
+    Picks the face of the icosahedron to project the point onto
+
+    Arguments
+    ---------
+    p: Numpy Array
+        theta, phi
+
+    ICO: List
+        List of Faces
+
+    Returns
+    -------
+    Face
+        The face that the point should be projected to.
+    """
+
+    lowest = np.pi*2
+    closest_face = ICO[0]
+
+    for f in ICO:
+        pmiddle = point_to_sphere(f.middle)
+        dist = np.sqrt((pmiddle[0] - p[0])**2. + (pmiddle[1] - p[1])**2.)
+        if dist < lowest:
+            lowest = dist
+            closest_face = f
+
+    return closest_face
+
