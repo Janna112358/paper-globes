@@ -11,7 +11,6 @@ stars = []
 
 for i, e in enumerate(data):
 
-    print(i)
     ra = e[0]
     dec = e[1]
     m = float(e[2])
@@ -33,5 +32,3 @@ for i, e in enumerate(data):
 
     s = Star(ra=ra_frac, dec=dec_frac, mag=m)
     stars.append(s)
-
-print(stars)
