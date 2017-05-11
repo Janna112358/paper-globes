@@ -2,3 +2,5 @@
 polyhedra_tatham/
 .idea/
 *.ipynb
+*.pyc
+
