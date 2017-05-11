@@ -11,6 +11,10 @@ class Face(object):
         list of Vertex objects confining the face
     ID: int
         number identifying the Face
+    normal: tuple
+        normal vector to the face
+    origin: tuple
+        origin of the local coordinate system
     """
 
     def __init__(self, vertices, ID):
@@ -27,8 +31,32 @@ class Face(object):
         
         self.vertices = vertices
         self.ID = ID
-    
         
+    def calNormal(self):
+        """
+        TO DO
+        
+        Calculates the normal vector to the Face
+        """
+        pass
+    
+    def pickOrigin(self):
+        """
+        TO DO
+        
+        Pick one of the vertices to be the origin of the local coordinate system
+        """
+        pass
+    
+    def calcAxes(self):
+        """
+        TO DO
+        
+        Calculates the axes of the local coordinate system
+        """
+        pass
+    
+    
 
 
 class Vertex(object):
