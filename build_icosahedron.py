@@ -91,6 +91,9 @@ for n in range(num):
     f, projp = projection.project_onto_ico(p, ICO)
     face_points[f.ID - 1].append(projp)
 
-face19_points = face_points[18]
+face19_points = np.array(face_points[18])
 face19 = ICO[18]
 
+import visualize
+
+visualize.draw_face(face19_points, face19)
