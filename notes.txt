@@ -1,9 +1,27 @@
 We want to project spherical images onto a polyhedron (e.g. icosahedron) and make a printable net of the surfaces of the polyhedron that you can cut out and fold/paste together to get some sort of paper globe.
 
-An idea for the projection of the spherical image onto polyhedron surfaces exists (see https://www.chiark.greenend.org.uk/~sgtatham/polypics/), but a description of the surfaces in a 3D coordinate system is needed.
+An idea for the projection of the spherical image onto polyhedron surfaces exists (see https://www.chiark.greenend.org.uk/~sgtatham/polypics/).
 
 Ideas for images: map of constellations (map points and maybe lines)
 sky map of some data, for example LIGO sky localisation of a GW event
 
 Also needed is some way to "print" the surfaces of the polyhedra, and arrange them as a net that can be folded together once printed out. Would be nice to add some edged that can be used to glue the thing together.
 
+A description of our icosahedron in 3D:
+vertices A (2, 1, 0)
+	 B (-2, 1, 0)
+	 C (2, -1, 0)
+	 D (-2, -1, 0)
+	 E (1, 0, 2)
+	 F (-1, 0, 2)
+	 G (1, 0, -2)
+	 H (-1, 0, -2)
+	 I (0, 2, 1)
+	 J (0, -2, 1)
+	 K (0, 2, -1)
+	 L (0, -2, -1)
+
+The 20 surfaces are formed by sets of 3 vertices. To know which, see icosahedron_naming.png. This identifies each surface by a number (roman numerals). All 30 edges are named with numbers as well (and you can see which ones should be pasted together).
+
+A local coordinate system is defined on each of the surfaces (a 2D one), so we know where to print points eventually. The conventien for this is as follow: pick the vertex with the name that is first in the alphabet to be the origin. (So for surface 1, vertices L, H, D, the origin is going to be in D). Then, go around anti-clockwise to the next vertex to find the direction of the first unit vectoru (so for surface 1, u goes from D in the direction of H). Then, the second unit vector v is orthogonal to this one (and orientated in the anti-clockwise direction as your usual x-y coordinate system). You can make this a 3D system by adding unit vector w in the third orthogonal direction, but all points on the surface will have a zero value in this direction.
+ 
