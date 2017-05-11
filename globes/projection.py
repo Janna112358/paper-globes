@@ -226,8 +226,10 @@ def pick_face(p, ICO):
     return closest_face
 
 
-def project_to_face(p, face):
+def project_to_face_WRONG(p, face, r = 1.):
     """
+    WRONG WRONG WRONG
+    
     Projects a point on the sphere to the local coordinate system 
     of the given face
     
@@ -244,12 +246,41 @@ def project_to_face(p, face):
         Coordinates of the projected point in the local coordinate system 
         of the face        
     """
-    s = sphere_to_cart(p)
+    s = sphere_to_cart(p, r = r)
 
     x = np.dot(face.u, s - face.middle)
     y = np.dot(face.v, s - face.middle)
     
     return np.array([x, y])
+    
+
+def project_to_face(p, face, r=1.0):
+    epsilon=1e-6
+
+    #Define plane
+    plane_normal = face.normal
+    plane_point = face.middle # can be any point on the plane
+
+    #Define ray
+    ray_direction = sphere_to_cart(p, r=r)
+    ray_point = np.array([0., 0., 0.]) # can be any point along the ray
+
+    #magic
+    ndotu = plane_normal.dot(ray_direction) 
+
+    if abs(ndotu) < epsilon:
+        print ("no intersection or line is within plane")
+
+    w = ray_point - plane_point
+    si = -plane_normal.dot(w) / ndotu
+    psi = w + si * ray_direction + plane_point
+
+    # project onto local coordinate system of the face
+    x = np.dot(face.u, psi)
+    y = np.dot(face.v, psi)
+    
+    return np.array([x, y])   
+
 
 
 def project_onto_ico(p, ICO):

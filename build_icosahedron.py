@@ -83,7 +83,7 @@ for j, v in enumerate(VERT):
 # test part to see what a projected circle looks like
 num = 1000
 circle_phi = np.array([0.66 for n in range(num)])
-circle_theta = np.linspace(0.0, 2 * math.pi, num=num)
+circle_theta = np.linspace(0.0, 2 * np.math.pi, num=num)
 
 face_points = [[] for f in ICO]
 for n in range(num):
@@ -91,6 +91,9 @@ for n in range(num):
     f, projp = projection.project_onto_ico(p, ICO)
     face_points[f.ID - 1].append(projp)
 
-face19_points = face_points[18]
+face19_points = np.array(face_points[18])
 face19 = ICO[18]
 
+import visualize
+
+visualize.draw_face(face19_points, face19)
