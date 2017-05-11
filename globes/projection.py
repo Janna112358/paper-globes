@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import numpy as np
 
+
 class Face(object):
     """         
     Face of a polyhedron, defined by its vertices. 
@@ -37,7 +38,7 @@ class Face(object):
         self.vertices = vertices
         self.numVertices = len(self.vertices)
         self.ID = ID
-        
+
     def calcSystem(self):
         """
         Calculates middle of the face, normal vector
@@ -57,6 +58,7 @@ class Face(object):
         # pick second axis orthogonal to first and to normal
         self.u = self.middle - self.vertices[0].coordinates
         self.v = np.outer(self.normal, self.u)
+
 
 class Vertex(object):
 
