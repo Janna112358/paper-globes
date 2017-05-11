@@ -54,10 +54,32 @@ class Face(object):
         # normal is in the direction of the origin through the middle
         self.normal = self.middle / np.linalg.norm(self.middle)
         
-        # pick first axis from middle to first vertex
+        # pick first axis from middle to first vertex (normalised)
         # pick second axis orthogonal to first and to normal
         self.u = self.middle - self.vertices[0].coordinates
+        self.u = self.u / np.linalg.norm(self.u)
         self.v = np.cross(self.normal, self.u)
+        
+    def calcLocalVertices(self):
+        """
+        Get position of the vertices of the face in the local coordinate system
+        
+        Only works for (triangular) icosahedron surfaces)
+        hard coded maths
+        
+        Returns
+        -------
+        list
+            list of 2D arrays of the coordinates of the vertices in the local
+            coodinate system
+        """
+        
+        D = np.linalg.norm(self.middle - self.vertices[0].coordinates)
+        v1 = np.array([D, 0])
+        v2 = np.array([-D * 0.5, -D * 0.5 * np.sqrt(3.0)])
+        v3 = np.array([-D * 0.5, D * 0.5 * np.sqrt(3.0)])
+        
+        return [v1, v2, v3]
 
 
 class Vertex(object):

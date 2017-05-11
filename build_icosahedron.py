@@ -80,8 +80,16 @@ for j, v in enumerate(VERT):
 #ax.scatter(xii, yii, zii, c = 'r')
 #plt.show()
 
-chosen = projection.pick_face(np.array([0.5 * np.math.pi, 0.5 * np.math.pi + 0.1]), ICO)
-print "Chosen face id", chosen.ID
+# test part to see what a projected circle looks like
+num = 1000
+circle_phi = np.array([0.66 for n in range(num)])
+circle_theta = np.linspace(0.0, 2 * math.pi, num=num)
 
-f, s = projection.project_onto_ico([0.5 * np.math.pi, 0.5 * np.math.pi + 0.1], ICO)
+face_points = [[] for f in ICO]
+for n in range(num):
+    p = np.array([circle_phi[n], circle_theta[n]])
+    f, projp = projection.project_onto_ico(p, ICO)
+    face_points[f.ID - 1].append(projp)    
+    
+
 
