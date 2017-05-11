@@ -255,6 +255,25 @@ def project_to_face_WRONG(p, face, r = 1.):
     
 
 def project_to_face(p, face, r=1.0):
+    """
+    also WRONG (maybe?)
+    
+    Projects a point on the sphere to the local coordinate system 
+    of the given face (EDIT: to the face in 3D space)
+    
+       Arguments
+    ---------
+    p: Numpy Array
+        theta, phi
+    face: Face
+        Face object to project onto
+        
+    Returns
+    -------
+    Numpy Array
+        Coordinates of the projected point in the local coordinate system 
+        of the face (EDIT: 3D point in global space)
+    """
     epsilon=1e-6
 
     #Define plane
@@ -265,14 +284,14 @@ def project_to_face(p, face, r=1.0):
     ray_direction = sphere_to_cart(p, r=r)
     ray_point = np.array([0., 0., 0.]) # can be any point along the ray
 
-    #magic
-    ndotu = plane_normal.dot(ray_direction) 
+    #magic http://geomalgorithms.com/a05-_intersect-1.html
+    ndotu = np.dot(plane_normal, ray_direction)
 
     if abs(ndotu) < epsilon:
         print ("no intersection or line is within plane")
 
     w = ray_point - plane_point
-    si = -plane_normal.dot(w) / ndotu
+    si = -np.dot(plane_normal, w) / ndotu
     psi = w + si * ray_direction + plane_point
 
     # project onto local coordinate system of the face
