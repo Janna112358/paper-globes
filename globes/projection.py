@@ -276,10 +276,11 @@ def project_to_face(p, face, r=1.0):
     psi = w + si * ray_direction + plane_point
 
     # project onto local coordinate system of the face
-    x = np.dot(face.u, psi)
-    y = np.dot(face.v, psi)
-    
-    return np.array([x, y])   
+    # x = np.dot(face.u, psi)
+    # y = np.dot(face.v, psi)
+
+    # return np.array([x, y])
+    return psi
 
 
 
