@@ -56,6 +56,8 @@ class Vertex(object):
         z: float
             z coordinate
         name: string
+            single letter name
+            for example, 'A'
         """
         
         self.x = x
