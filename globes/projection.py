@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import numpy as np
 
 class Face(object):
     """         
@@ -57,7 +57,6 @@ class Face(object):
         # pick second axis orthogonal to first and to normal
         self.u = self.middle - self.vertices[0].coordinates
         self.v = np.outer(self.normal, self.u)
-    
 
 class Vertex(object):
 
@@ -103,3 +102,32 @@ class Vertex(object):
         """
         pass
 
+
+def point_to_sphere(p):
+    """
+
+    Projects an input coordinates to the spherical surface.
+
+    Arguments
+    ---------
+    p: Numpy Array
+        x, y, z
+
+    Returns
+    -------
+    Numpy Array
+        theta, phi
+    """
+
+    r = np.sqrt(np.dot(p, p))
+    if r == 0:
+        print("Error: r should'nt be 0")
+        return None
+
+    if p[0] == 0:
+        phi = np.pi/2
+    else:
+        phi = np.arctan(p[1]/p[0])
+    theta = np.arccos(p[2]/r)
+
+    return np.array([theta, phi])
