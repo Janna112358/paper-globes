@@ -7,6 +7,22 @@ import numpy as np
 
 
 def draw_face(points, face):
+    """
+    Draw a matplotlib graph of a single face with points on it, also draw the vertices and Patch the edges of the
+    triangle
+
+    Arguments
+    ---------
+    points: NumPy Array
+        The points to draw
+
+    face: Face
+        The face object
+
+    Returns
+    -------
+    Void
+    """
 
     local_vertices = face.calcLocalVertices()
 
