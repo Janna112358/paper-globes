@@ -11,10 +11,15 @@ class Face(object):
         list of Vertex objects confining the face
     ID: int
         number identifying the Face
-    normal: tuple
+    middle: np array
+        middle of the face
+        also origin of the local coordinate system
+    normal: np array
         normal vector to the face
-    origin: tuple
-        origin of the local coordinate system
+    u: np array
+        first axis of the local coordinate system
+    v: np array
+        second axis of the local coordinate system
     """
 
     def __init__(self, vertices, ID):
@@ -30,34 +35,29 @@ class Face(object):
         """
         
         self.vertices = vertices
+        self.numVertices = len(self.vertices)
         self.ID = ID
         
-    def calNormal(self):
+    def calcSystem(self):
         """
-        TO DO
+        Calculates middle of the face, normal vector
+        and local coordinate system
+        """        
         
-        Calculates the normal vector to the Face
-        """
-        pass
-    
-    def pickOrigin(self):
-        """
-        TO DO
+        # middle as average of the vertices
+        self.middle = np.zeros(3)
+        for v in self.vertices:
+            self.middle += v.coordinates
+        self.middle = self.middle / self.numVertices
         
-        Pick one of the vertices to be the origin of the local coordinate system
-        """
-        pass
-    
-    def calcAxes(self):
-        """
-        TO DO
+        # normal is in the direction of the origin through the middle
+        self.normal = self.middle / np.linalg.norm(self.middle)
         
-        Calculates the axes of the local coordinate system
-        """
-        pass
+        # pick first axis from middle to first vertex
+        # pick second axis orthogonal to first and to normal
+        self.u = self.middle - self.vertices[0].coordinates
+        self.v = np.outer(self.normal, self.u)
     
-    
-
 
 class Vertex(object):
 
@@ -73,6 +73,8 @@ class Vertex(object):
             y coordinate
         z: float
             z coordinate
+        coordinates: np array
+            (x, y, z) coordinates
         name: string
         
         Attributes
@@ -91,6 +93,7 @@ class Vertex(object):
         self.x = x
         self.y = y
         self.z = z
+        self.coordinates = np.array(self.x, self.y, self.z)
         self.name = name
 
     def to_spherical(self):
