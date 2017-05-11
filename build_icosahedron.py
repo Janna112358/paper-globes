@@ -80,6 +80,6 @@ for j, v in enumerate(VERT):
 #ax.scatter(xii, yii, zii, c = 'r')
 #plt.show()
 
-chosen = projection.pick_face(np.array([0.01, 0.01 + np.pi * 0.22]), ICO)
+chosen = projection.pick_face(np.array([0.5 * np.math.pi, 0.5 * np.math.pi + 0.1]), ICO)
 print "Chosen face id", chosen.ID
 

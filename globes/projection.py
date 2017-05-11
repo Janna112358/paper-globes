@@ -135,15 +135,41 @@ def point_to_sphere(p):
     if x > 0 and y >= 0:
         phi = np.arctan(y / x)
     elif x <= 0 and y > 0:
-        phi = np.arctan(np.abs(x) / y) + math.pi*0.5
+        phi = np.arctan(np.abs(x) / y) + np.math.pi*0.5
     elif x < 0 and y <= 0:
-        phi = np.arctan(np.abs(y) / np.abs(x)) + math.pi
+        phi = np.arctan(np.abs(y) / np.abs(x)) + np.math.pi
     elif x >= 0 and y < 0:
-        phi = np.arctan(x / np.abs(y)) + math.pi*1.5
+        phi = np.arctan(x / np.abs(y)) + np.math.pi*1.5
         
     theta = np.arccos(z/r)
 
     return np.array([theta, phi])
+    
+def sphere_to_cart(p, r = 1.):
+    """
+    Transforms point on the sphere to Cartesian coordinates
+    
+    Arguments
+    ---------
+    p: Numpy Array
+        point (theta, phi) on the sphere
+    r: float
+        Radius of the sphere
+        default: 1.0
+    
+    Returns
+    -------
+    Numpy Array
+        point (x, y, z) in Cartesian coordinates
+    """
+    theta = p[0]
+    phi = p[1]
+    
+    x = r * np.sin(theta) * np.cos(phi)
+    y = r * np.sin(theta) * np.sin(phi)
+    z = r * np.cos(theta)
+    
+    return np.array([x, y, z])
 
 
 def pick_face(p, ICO):
@@ -175,4 +201,28 @@ def pick_face(p, ICO):
             closest_face = f
 
     return closest_face
+    
+def project_to_face(p, face):
+    """
+    Projects a point on the sphere to the local coordinate system 
+    of the given face
+    
+    Arguments
+    ---------
+    p: Numpy Array
+        theta, phi
+    face: Face
+        Face object to project onto
+        
+    Returns
+    -------
+    Numpy Array
+        Coordinates of the projected point in the local coordinate system 
+        of the face        
+    """
+    s = sphere_to_cart(p)
 
+    x = np.dot(face.u, s - face.middle)
+    y = np.dot(face.v, s - face.middle)
+    
+    return x, y
