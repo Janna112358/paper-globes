@@ -94,7 +94,7 @@ class Vertex(object):
         self.x = x
         self.y = y
         self.z = z
-        self.coordinates = np.array(self.x, self.y, self.z)
+        self.coordinates = np.array([self.x, self.y, self.z])
         self.name = name
 
     def to_spherical(self):
