@@ -24,10 +24,10 @@ def draw_face(points, face):
     Void
     """
 
-    local_vertices = face.calcLocalVertices()
 
     # the line below might not work, but we need to add [0.0, 0.0] to the very end of the numpy matrix
-    vertices = np.concatenate((local_vertices, [0.0, 0.0]))
+    vertices = face.calcLocalVertices()
+    vertices.append(np.array([0.0, 0.0]))
 
     # this is the mask to draw the triangle. the last line actually closes the poly
     codes = [Path.MOVETO,
@@ -41,4 +41,4 @@ def draw_face(points, face):
     ax = fig.add_subplot(111)
     patch = patches.PathPatch(path, facecolor='white', lw=1, alpha=0.5)
     ax.add_patch(patch)
-    ax.scatter(points[0], points[1])
+    ax.scatter(points[:,0], points[:,1])
