@@ -3,25 +3,27 @@ We want to project spherical images onto a polyhedron (e.g. icosahedron) and mak
 An idea for the projection of the spherical image onto polyhedron surfaces exists (see https://www.chiark.greenend.org.uk/~sgtatham/polypics/).
 
 Ideas for images: map of constellations (map points and maybe lines)
-sky map of some data, for example LIGO sky localisation of a GW event
+sky map of some data, for example LIGO sky localisation of a gravitational wave event.
 
 Also needed is some way to "print" the surfaces of the polyhedra, and arrange them as a net that can be folded together once printed out. Would be nice to add some edged that can be used to glue the thing together.
 
 A description of our icosahedron in 3D:
-vertices A (2, 1, 0)
-	 B (-2, 1, 0)
-	 C (2, -1, 0)
-	 D (-2, -1, 0)
-	 E (1, 0, 2)
-	 F (-1, 0, 2)
-	 G (1, 0, -2)
-	 H (-1, 0, -2)
-	 I (0, 2, 1)
-	 J (0, -2, 1)
-	 K (0, 2, -1)
-	 L (0, -2, -1)
+vertices A (g, 1, 0)
+	 B (-g, 1, 0)
+	 C (g, -1, 0)
+	 D (-g, -1, 0)
+	 E (1, 0, g)
+	 F (-1, 0, g)
+	 G (1, 0, -g)
+	 H (-1, 0, -g)
+	 I (0, g, 1)
+	 J (0, -g, 1)
+	 K (0, g, -1)
+	 L (0, -g, -1)
+Where g is the golden ratio (1 + sqrt(5)) / 2.
 
 The 20 surfaces are formed by sets of 3 vertices. To know which, see icosahedron_naming.png. This identifies each surface by a number (roman numerals). All 30 edges are named with numbers as well (and you can see which ones should be pasted together).
 
-A local coordinate system is defined on each of the surfaces (a 2D one), so we know where to print points eventually. The conventien for this is as follow: pick the vertex with the name that is first in the alphabet to be the origin. (So for surface 1, vertices L, H, D, the origin is going to be in D). Then, go around anti-clockwise to the next vertex to find the direction of the first unit vectoru (so for surface 1, u goes from D in the direction of H). Then, the second unit vector v is orthogonal to this one (and orientated in the anti-clockwise direction as your usual x-y coordinate system). You can make this a 3D system by adding unit vector w in the third orthogonal direction, but all points on the surface will have a zero value in this direction.
+A local coordinate system is defined on each of the surfaces (a 2D one), so we know where to print points eventually. The convention for this is as follow: There is a set order to the vertices of each face; starting with the top (down) one for right-side-up (up-side-down) triangles in the net, and going around anti-clockwise. The first unit vector u goes from the middle of the triangle to the first vertex. Then, the second unit vector is the cross product of u and the normal on the plane.
+
  
