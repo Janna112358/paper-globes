@@ -2,86 +2,6 @@
 import numpy as np
 
 
-class Face(object):
-    """         
-    Face of a polyhedron, defined by its vertices. 
-    
-    Attributes
-    ----------
-    vertices: list
-        list of Vertex objects confining the face
-    ID: int
-        number identifying the Face
-    middle: np array
-        middle of the face
-        also origin of the local coordinate system
-    normal: np array
-        normal vector to the face
-    u: np array
-        first axis of the local coordinate system
-    v: np array
-        second axis of the local coordinate system
-    """
-
-    def __init__(self, vertices, ID):
-        """
-        Creates a Surface Object from a set of vertices
-        
-        Parameters
-        ----------
-        vertices: list
-            list of Vertex objects confining the face
-        ID: int
-            number identifying the Face
-        """
-        
-        self.vertices = vertices
-        self.numVertices = len(self.vertices)
-        self.ID = ID
-
-    def calcSystem(self):
-        """
-        Calculates middle of the face, normal vector
-        and local coordinate system
-        """        
-        
-        # middle as average of the vertices
-        self.middle = np.zeros(3)
-        for v in self.vertices:
-            self.middle += v.coordinates
-        self.middle = self.middle / self.numVertices
-        
-        # normal is in the direction of the origin through the middle
-        self.normal = self.middle / np.linalg.norm(self.middle)
-        
-        # pick first axis from middle to first vertex (normalised)
-        # pick second axis orthogonal to first and to normal
-        self.u = self.middle - self.vertices[0].coordinates
-        self.u = self.u / np.linalg.norm(self.u)
-        self.v = np.cross(self.normal, self.u)
-        
-    def calcLocalVertices(self):
-        """
-        Get position of the vertices of the face in the local coordinate system
-        
-        Only works for (triangular) icosahedron surfaces)
-        hard coded maths
-        
-        Returns
-        -------
-        list
-            list of 2D arrays of the coordinates of the vertices in the local
-            coodinate system
-        """
-        
-        D = np.linalg.norm(self.middle - self.vertices[0].coordinates)
-        v1 = np.array([D, 0])
-        v2 = np.array([-D * 0.5, -D * 0.5 * np.sqrt(3.0)])
-        v3 = np.array([-D * 0.5, D * 0.5 * np.sqrt(3.0)])
-        
-        return [v1, v2, v3]
-
-
 class Vertex(object):
 
     def __init__(self, x, y, z, name):
@@ -118,13 +38,231 @@ class Vertex(object):
         self.z = z
         self.coordinates = np.array([self.x, self.y, self.z])
         self.name = name
+    
 
-    def to_spherical(self):
+class Face(object):
+    """         
+    Face of a polyhedron, defined by its vertices. 
+    
+    Attributes
+    ----------
+    vertices: list
+        list of Vertex objects confining the face
+    ID: int
+        number identifying the Face
+    middle: np array
+        middle of the face
+        also origin of the local coordinate system
+    normal: np array
+        normal vector to the face
+    u: np array
+        first axis of the local coordinate system
+    v: np array
+        second axis of the local coordinate system
+    """
+
+    def __init__(self, vertices, ID):
         """
-        Maybe we'll need it, who knows?
-        :return:
+        Creates a Surface Object from a set of vertices
+        
+        Parameters
+        ----------
+        vertices: list
+            list of Vertex objects confining the face
+        ID: int
+            number identifying the Face
         """
-        pass
+        
+        self.vertices = vertices
+        self.numVertices = len(self.vertices)
+        self.ID = ID
+        
+        self.calc_system()
+
+    def calc_system(self):
+        """
+        Calculates middle of the face, normal vector
+        and local coordinate system
+        """        
+        
+        # middle as average of the vertices
+        self.middle = np.zeros(3)
+        for v in self.vertices:
+            self.middle += v.coordinates
+        self.middle = self.middle / self.numVertices
+        
+        # normal is in the direction of the origin through the middle
+        self.normal = self.middle / np.linalg.norm(self.middle)
+        
+        # pick first axis from middle to first vertex (normalised)
+        # pick second axis orthogonal to first and to normal
+        self.u = self.middle - self.vertices[0].coordinates
+        self.u = self.u / np.linalg.norm(self.u)
+        self.v = np.cross(self.normal, self.u)
+        
+    def calc_local_vertices(self):
+        """
+        Get position of the vertices of the face in the local coordinate system
+        
+        Only works for (triangular) icosahedron surfaces)
+        hard coded maths
+        
+        Returns
+        -------
+        list
+            list of 2D arrays of the coordinates of the vertices in the local
+            coodinate system
+        """
+        
+        D = np.linalg.norm(self.middle - self.vertices[0].coordinates)
+        v1 = np.array([D, 0])
+        v2 = np.array([-D * 0.5, -D * 0.5 * np.sqrt(3.0)])
+        v3 = np.array([-D * 0.5, D * 0.5 * np.sqrt(3.0)])
+        
+        return [v1, v2, v3]
+    
+    def global_to_lcs(self, point):
+        """
+        Convert a point on the face in global (3D) coordinates to the local
+        coordinate system of the face (2D)
+        
+        Paramters
+        ---------
+        point: array-like
+            3D global coordinates of a point on the face
+        
+        Returns
+        -------
+        NumPy Array: the point in the lcs of the face
+        """
+        
+        # check that point is in the plane of the face
+        if not np.dot((point - self.middle), self.normal) < 1.e-12:
+            print "WARNING, point not in the place of face"
+        
+        a = np.dot(point - self.middle, self.u)
+        b = np.dot(point - self.middle, self.v)
+        return (a, b)
+
+
+class Ico(object):
+    """
+    Icosahedron (with 20 faces).
+    """
+    def __init__(self):
+        golden = (1. + np.sqrt(5)) / 2.0
+
+        # All of our verices for the icosahedron
+        A = Vertex(golden, 1, 0, "A")
+        B = Vertex(-golden, 1, 0, "B")
+        C = Vertex(golden, -1, 0, "C")
+        D = Vertex(-golden, -1, 0, "D")
+        
+        E = Vertex(1, 0, golden, "E")
+        F = Vertex(-1, 0, golden, "F")
+        G = Vertex(1, 0, -golden, "G")
+        H = Vertex(-1, 0, -golden, "H")
+        
+        I = Vertex(0, golden, 1, "I")
+        J = Vertex(0, -golden, 1, "J")
+        K = Vertex(0, golden, -1, "K")
+        L = Vertex(0, -golden, -1, "L")
+        
+        self.vertices = [A, B, C, D, E, F, G, H, I, J, K, L]
+        
+        # All of our Faces for the icosahedron
+        F1 = Face([H, L, D], 1)
+        F2 = Face([H, D, B], 2)
+        F3 = Face([H, B, K], 3)
+        F4 = Face([H, K, G], 4)
+        F5 = Face([H, G, L], 5)
+        
+        F6 = Face([C, L, G], 6)
+        F7 = Face([G, A, C], 7)
+        F8 = Face([A, G, K], 8)
+        F9 = Face([K, I, A], 9)
+        F10 = Face([I, K, B], 10)
+        F11 = Face([B, F, I], 11)
+        F12 = Face([F, B, D], 12)
+        F13 = Face([D, J, F], 13)
+        F14 = Face([J, D, L], 14)
+        F15 = Face([L, C, J], 15)
+        
+        F16 = Face([E, J, C], 16)
+        F17 = Face([E, C, A], 17)
+        F18 = Face([E, A, I], 18)
+        F19 = Face([E, I, F], 19)
+        F20 = Face([E, F, J], 20)
+        
+        self.faces = [F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, 
+                      F13, F14, F15, F16, F17, F18, F19, F20]
+        
+    def pick_face(self, p):
+        """
+        Pick which face a point p should be projected on
+        
+        Parameters
+        ----------
+        p: array-like
+            point p in theta, phi coordinates
+            
+        Returns
+        -------
+        Face: The face p is to be projected on
+        """
+        lowest = np.pi*2
+        closest_face = self.faces[0]
+
+        for f in self.faces:
+            pmiddle = point_to_sphere(f.middle)
+            dist = np.sqrt((pmiddle[0] - p[0])**2. + (pmiddle[1] - p[1])**2.)
+            if dist < lowest:
+                lowest = dist
+                closest_face = f
+
+        return closest_face
+    
+    def project_onto_ico_3D(self, p):
+        """
+        Project a point p onto one of the faces of the icosahedron.
+        
+        Parameters
+        ----------
+        p: array-like
+            point p in theta, phi coordinates
+            
+        Returns
+        -------
+        Face: Face the point was projected on
+        NumPy Array: (x, y, z) coodinates of the projected point
+            in global coordinates
+        """
+
+        face = self.pick_face(p)
+        # projected point in the intersection of a ray from the origin through
+        # the point in spherical coordinates and the plane of the face
+        pcart = sphere_to_cart(p)
+        projp = (np.dot(face.middle, face.normal) / 
+                 np.dot(pcart, face.normal)) * pcart
+        return face, projp
+    
+    def project_onto_ico_lcs(self, p):
+        """
+        Project a point onto one of the faces of the icosahedron.
+        
+        Parameters
+        ----------
+        p: array-like
+            point p in theta, phi coordinates
+        
+        Returns
+        -------
+        Face: Face the point was projected on
+        NumPy Array: (x, y) coordinates of the projected point
+            in the lcs of the face
+        """
+        face, projp3D = self.project_onto_ico_3D(p)
+        return face, face.global_to_lcs(projp3D)
 
 
 def point_to_sphere(p):
@@ -194,136 +332,5 @@ def sphere_to_cart(p, r=1.):
     
     return np.array([x, y, z])
 
-
-def pick_face(p, ICO):
-    """
-    Picks the face of the icosahedron to project the point onto
-
-    Arguments
-    ---------
-    p: Numpy Array
-        theta, phi
-
-    ICO: List
-        List of Faces
-
-    Returns
-    -------
-    Face
-        The face that the point should be projected to.
-    """
-
-    lowest = np.pi*2
-    closest_face = ICO[0]
-
-    for f in ICO:
-        pmiddle = point_to_sphere(f.middle)
-        dist = np.sqrt((pmiddle[0] - p[0])**2. + (pmiddle[1] - p[1])**2.)
-        if dist < lowest:
-            lowest = dist
-            closest_face = f
-
-    return closest_face
-
-
-def project_to_face_WRONG(p, face, r = 1.):
-    """
-    WRONG WRONG WRONG
-    
-    Projects a point on the sphere to the local coordinate system 
-    of the given face
-    
-    Arguments
-    ---------
-    p: Numpy Array
-        theta, phi
-    face: Face
-        Face object to project onto
-        
-    Returns
-    -------
-    Numpy Array
-        Coordinates of the projected point in the local coordinate system 
-        of the face        
-    """
-    s = sphere_to_cart(p, r = r)
-
-    x = np.dot(face.u, s - face.middle)
-    y = np.dot(face.v, s - face.middle)
-    
-    return np.array([x, y])
-    
-
-def project_to_face(p, face, r=1.0):
-    """
-    also WRONG (maybe?)
-    
-    Projects a point on the sphere to the local coordinate system 
-    of the given face (EDIT: to the face in 3D space)
-    
-       Arguments
-    ---------
-    p: Numpy Array
-        theta, phi
-    face: Face
-        Face object to project onto
-        
-    Returns
-    -------
-    Numpy Array
-        Coordinates of the projected point in the local coordinate system 
-        of the face (EDIT: 3D point in global space)
-    """
-    epsilon=1e-6
-
-    #Define plane
-    plane_normal = face.normal
-    plane_point = face.middle # can be any point on the plane
-
-    #Define ray
-    ray_direction = sphere_to_cart(p, r=r)
-    ray_point = np.array([0., 0., 0.]) # can be any point along the ray
-
-    #magic http://geomalgorithms.com/a05-_intersect-1.html
-    ndotu = np.dot(plane_normal, ray_direction)
-
-    if abs(ndotu) < epsilon:
-        print ("no intersection or line is within plane")
-
-    w = ray_point - plane_point
-    si = -np.dot(plane_normal, w) / ndotu
-    psi = w + si * ray_direction + plane_point
-
-    # project onto local coordinate system of the face
-    # x = np.dot(face.u, psi)
-    # y = np.dot(face.v, psi)
-
-    # return np.array([x, y])
-    return psi
-
-
-
-def project_onto_ico(p, ICO):
-    """
-    Project a point on the sphere to the right surface of a given icosahedron
-    
-    Arguments
-    ---------
-    p: Numpy Array
-        point (theta, phi) on the sphere to project
-    ICO: list
-        list of Face objects that form an icosahedron
-        
-    Returns
-    -------
-    face: Face
-        Face that the point is projected onto
-    Numpy Array:
-        point (x, y) the point in projected onto in the local coordinate system
-        of the sphere
-    """
-    
-    face = pick_face(p, ICO)
-    projp = project_to_face(p, face)
-    
-    return face, projp
+if __name__=="__main__":
+    ICO = Ico()

@@ -49,11 +49,12 @@ line(e5,j2)
 
 plt.axis((l1[0],j2[0],e1[1],h1[1]))
 
-# size = 5
-# xs = random.random(2)
-# ys = random.random(2)
-# mags = [-1.44, 10.71]
-# mags = [(-mag+12.15)*5 for mag in mags]
+#size = 5
+#xs = random.random(2)
+#ys = random.random(2)
+#mags = [-1.44, 10.71]
+#mags = [(-mag+12.15)*5 for mag in mags]
 #plt.scatter(xs, ys, s=mags, c='k')
+
 plt.axis('off')
 plt.savefig('paper_globe.pdf', bbox_inches='tight')

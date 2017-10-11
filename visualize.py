@@ -9,8 +9,8 @@ from mpl_toolkits.mplot3d import Axes3D
 
 def draw_face2(points, face):
     """
-    Draw a matplotlib graph of a single face with points on it, also draw the vertices and Patch the edges of the
-    triangle
+    Draw a matplotlib graph of a single face with points on it, 
+    also draw the vertices and Patch the edges of the triangle
 
     Arguments
     ---------
@@ -24,7 +24,6 @@ def draw_face2(points, face):
     -------
     Void
     """
-
 
     # the line below might not work, but we need to add [0.0, 0.0] to the very end of the numpy matrix
     vertices = face.calcLocalVertices()
@@ -53,8 +52,8 @@ def draw_face2(points, face):
 
 def draw_face(points_list, ICO):
     """
-    Draw a matplotlib graph of a single face with points on it, also draw the vertices and Patch the edges of the
-    triangle
+    Draw a matplotlib graph of a single face with points on it, 
+    also draw the vertices and Patch the edges of the triangle
 
     Arguments
     ---------
@@ -68,8 +67,7 @@ def draw_face(points_list, ICO):
     -------
     Void
     """
-
-
+    
     #vert_x = []
     #vert_y = []
     #vert_z = []
@@ -92,4 +90,16 @@ def draw_face(points_list, ICO):
         ax.scatter(points[:,0], points[:,1], points[:,2])
         #ax.scatter(vert_x, vert_y, vert_z)
 
+    plt.show()
+    
+def plot_points(points):
+    """
+    Plot a list of point in 3D
+    """
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    
+    for p in points:
+        ax.scatter(p[0], p[1], [2])
+    
     plt.show()
