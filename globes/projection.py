@@ -59,6 +59,8 @@ class Face(object):
         first axis of the local coordinate system
     v: np array
         second axis of the local coordinate system
+    size: float
+        length of middle to first vertex
     """
 
     def __init__(self, vertices, ID):
@@ -96,7 +98,8 @@ class Face(object):
         
         # pick first axis from middle to first vertex (normalised)
         # pick second axis orthogonal to first and to normal
-        self.u = self.middle - self.vertices[0].coordinates
+        self.u = self.vertices[0].coordinates - self.middle
+        self.size = np.linalg.norm(self.u)
         self.u = self.u / np.linalg.norm(self.u)
         self.v = np.cross(self.normal, self.u)
         
@@ -135,7 +138,6 @@ class Face(object):
         -------
         NumPy Array: the point in the lcs of the face
         """
-        
         # check that point is in the plane of the face
         if not np.dot((point - self.middle), self.normal) < 1.e-12:
             print "WARNING, point not in the place of face"
@@ -144,7 +146,14 @@ class Face(object):
         b = np.dot(point - self.middle, self.v)
         return (a, b)
     
-    def lcs_to_net(self, point, mnet, unet):
+    def lcs_to_global(self, point):
+        """
+        Convert point in lcs to global (3D) coordinates
+        """
+        p = self.middle + point[0]*self.u + point[1]*self.v
+        return p
+    
+    def lcs_to_net(self, point, mnet, unet, scale=1):
         """        
         Convert coordinates in lcs to coordinates on the icosahedron net grid
         
@@ -157,23 +166,30 @@ class Face(object):
         unet: array-like
             coordinates of the endpoint of u in the face of the net,
             i.e. the coordinates of the first vertex on the net
+        scale: int or float
+            scale used in the icosahedron net
+            default = 1
             
         Returns
         -------
         NumPy Array: coordinates of the point on the net
         """
+        # convert to numpy arrays if not arrays already
+        # apply size factor
+        unet = np.array(unet) / self.size
+        
         # get the position of the endpoint of v in the net
         Dxu = unet[0] - mnet[0]
         Dyu = unet[1] - mnet[1]
         vnet = np.array([mnet[0] - Dyu, mnet[1] + Dxu])
         
-        # convert to numpy arrays if not arrays already
-        unet = np.array(unet)
         mnet = np.array(mnet)
         
         # vectors pointing from to u and v
         to_u = unet - mnet
         to_v = vnet - mnet
+        
+        print np.linalg.norm(to_u), np.linalg.norm(to_v)
         
         # coordinates of the point on the net
         pnet = mnet + point[0]*to_u + point[1]*to_v
@@ -327,16 +343,8 @@ def point_to_sphere(p):
     y = p[1]
     z = p[2]
 
-    if x > 0 and y >= 0:
-        phi = np.arctan(y / x)
-    elif x <= 0 and y > 0:
-        phi = np.arctan(np.abs(x) / y) + np.math.pi*0.5
-    elif x < 0 and y <= 0:
-        phi = np.arctan(np.abs(y) / np.abs(x)) + np.math.pi
-    elif x >= 0 and y < 0:
-        phi = np.arctan(x / np.abs(y)) + np.math.pi*1.5
-        
-    theta = np.arccos(z/r)
+    phi = np.arctan2(y, x)%(2*np.pi)
+    theta = np.arccos(z/r)    
 
     return np.array([theta, phi])
 

@@ -2,7 +2,7 @@ import math
 import matplotlib.pyplot as plt
 from globes.projection import Icosahedron
 from import_stars import get_stars
-    
+
 class IcosahedronNet():
     """
     Net, based on nodes in a 2D coordinate system
@@ -14,7 +14,7 @@ class IcosahedronNet():
         Ico: Ico
             Icosahedron
         scale: int or float
-            scale for the figure
+            scale for the figure, triangel side is 2*scale
             default = 1
         """
         self.Ico = Icosahedron()
@@ -102,14 +102,18 @@ class IcosahedronNet():
         """
         Project star onto icosahedron face, then plot on net (on ax)
         """
-        face, proj_star = self.Ico.project_in_lcs([star.ra, star.dec])
-        net_star = face.lcs_to_net(proj_star, 
-                                   self.mnets[face.ID], self.unets[face.ID])
+        face, proj_star = self.Ico.project_in_lcs([star.dec, star.ra])
+        if face.ID == 12:
+            print proj_star
+            net_star = face.lcs_to_net(proj_star, self.mnets[face.ID], 
+                                       self.unets[face.ID], self.scale)
         
-        ax.scatter(net_star[0], net_star[1], c='k', s=2*star.mag, marker='*')
-        pass
+            ax.scatter(net_star[0], net_star[1], c='k', s=2*star.mag, marker='*')
+        else:
+            pass       
+        
     
-    def make_globe(self):
+    def make_globe(self, stars=True):
         """
         Create a figure, plot the net, and plot stars
         """
@@ -124,14 +128,18 @@ class IcosahedronNet():
         
         self.plot_net(ax)
         
-        stars = get_stars()
-        for s in stars:
-            self.plot_star(s, ax)
+        if stars:
+            stars = get_stars()
+            for s in stars:
+                self.plot_star(s, ax)
+                
+        ax.scatter(self.mnets[12][0], self.mnets[12][1], c='r', s=6)
+        ax.scatter(self.unets[12][0], self.unets[12][1], c='g', s=30)
         
         ax.axis('off')
         fig.savefig('paper_globe.pdf', bbox_inches='tight')
 
 if __name__=="__main__":
     Iconet = IcosahedronNet()
-    Iconet.make_globe()
+    Iconet.make_globe(stars=True)
 
