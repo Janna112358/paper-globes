@@ -28,7 +28,7 @@ def middles_test(ICO):
         pmiddle = projection.point_to_sphere(f.middle)
         proj_middles[i] = pmiddle
         
-        face, pback = ICO.project_onto_ico(pmiddle)
+        face, pback = ICO.project_in_3D(pmiddle)
         if face != f:
             print("Point not projected back onto the same face")
         pback_middles[i] = pback
@@ -64,7 +64,7 @@ def plot_lcs(ICO):
     
 if __name__ == "__main__":
     # buil an icosahedron
-    ICO = projection.Ico()
+    ICO = projection.Icosahedron()
     
     middles_test(ICO)
     
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     face_points = [[] for i in range(20)]
     for n in range(num):
         p = np.array([circle_phi[n], circle_theta[n]])
-        face, projp = ICO.project_onto_ico(p)
+        face, projp = ICO.project_in_3D(p)
         face_points[face.ID - 1].append(projp)
     
     fig = plt.figure()

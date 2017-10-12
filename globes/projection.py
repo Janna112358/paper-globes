@@ -116,10 +116,10 @@ class Face(object):
         
         D = np.linalg.norm(self.middle - self.vertices[0].coordinates)
         v1 = np.array([D, 0])
-        v2 = np.array([-D * 0.5, -D * 0.5 * np.sqrt(3.0)])
-        v3 = np.array([-D * 0.5, D * 0.5 * np.sqrt(3.0)])
+        v2 = np.array([-D*0.5, -D*0.5*np.sqrt(3.0)])
+        v3 = np.array([-D*0.5, D*0.5*np.sqrt(3.0)])
         
-        return [v1, v2, v3]
+        return [v1, v2, v3]         
     
     def global_to_lcs(self, point):
         """
@@ -143,9 +143,44 @@ class Face(object):
         a = np.dot(point - self.middle, self.u)
         b = np.dot(point - self.middle, self.v)
         return (a, b)
+    
+    def lcs_to_net(self, point, mnet, unet):
+        """        
+        Convert coordinates in lcs to coordinates on the icosahedron net grid
+        
+        Parameters
+        ----------
+        point: array-like
+            2D coordinates of a point in the lcs of the face
+        mnet: array-like
+            coordinates of the middle point of the face in the net
+        unet: array-like
+            coordinates of the endpoint of u in the face of the net,
+            i.e. the coordinates of the first vertex on the net
+            
+        Returns
+        -------
+        NumPy Array: coordinates of the point on the net
+        """
+        # get the position of the endpoint of v in the net
+        Dxu = unet[0] - mnet[0]
+        Dyu = unet[1] - mnet[1]
+        vnet = np.array([mnet[0] - Dyu, mnet[1] + Dxu])
+        
+        # convert to numpy arrays if not arrays already
+        unet = np.array(unet)
+        mnet = np.array(mnet)
+        
+        # vectors pointing from to u and v
+        to_u = unet - mnet
+        to_v = vnet - mnet
+        
+        # coordinates of the point on the net
+        pnet = mnet + point[0]*to_u + point[1]*to_v
+        return pnet
+        
 
-
-class Ico(object):
+class Icosahedron(object):
     """
     Icosahedron (with 20 faces).
     """
@@ -222,7 +257,7 @@ class Ico(object):
 
         return closest_face
     
-    def project_onto_ico_3D(self, p):
+    def project_in_3D(self, p):
         """
         Project a point p onto one of the faces of the icosahedron.
         
@@ -246,7 +281,7 @@ class Ico(object):
                  np.dot(pcart, face.normal)) * pcart
         return face, projp
     
-    def project_onto_ico_lcs(self, p):
+    def project_in_lcs(self, p):
         """
         Project a point onto one of the faces of the icosahedron.
         
@@ -261,7 +296,7 @@ class Ico(object):
         NumPy Array: (x, y) coordinates of the projected point
             in the lcs of the face
         """
-        face, projp3D = self.project_onto_ico_3D(p)
+        face, projp3D = self.project_in_3D(p)
         return face, face.global_to_lcs(projp3D)
 
 
@@ -333,4 +368,4 @@ def sphere_to_cart(p, r=1.):
     return np.array([x, y, z])
 
 if __name__=="__main__":
-    ICO = Ico()
+    ICO = Icosahedron()

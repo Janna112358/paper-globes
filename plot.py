@@ -1,60 +1,137 @@
-
-from numpy import random
 import math
 import matplotlib.pyplot as plt
+from globes.projection import Icosahedron
+from import_stars import get_stars
+    
+class IcosahedronNet():
+    """
+    Net, based on nodes in a 2D coordinate system
+    """
+    def __init__(self, scale=1):
+        """
+        Parameters
+        ----------
+        Ico: Ico
+            Icosahedron
+        scale: int or float
+            scale for the figure
+            default = 1
+        """
+        self.Ico = Icosahedron()
+        self.scale = scale
+        
+        # create notes of the icosahedron net
+        self.l1 = self.node(0, 2)
+        self.l2 = self.node(10, 2)
+        self.j1 = self.node(1, 1)
+        self.j2 = self.node(11, 1)
+        self.h1 = self.node(1, 3)
+        self.h2 = self.node(3, 3)
+        self.h3 = self.node(5, 3)
+        self.h4 = self.node(7, 3)
+        self.h5 = self.node(9, 3)
+        self.e1 = self.node(2, 0)
+        self.e2 = self.node(4, 0)
+        self.e3 = self.node(6, 0)
+        self.e4 = self.node(8, 0)
+        self.e5 = self.node(10, 0)
+               
+        # dictionary with net coordinates of all middles per face
+        self.mnets = {1:self.node(1, 2.5), 2:self.node(3, 2.5), 3:self.node(5, 2.5),
+                      4:self.node(7, 2.5), 5:self.node(9, 2.5), 6:self.node(9, 1.5), 
+                      7:self.node(8, 1.5), 8:self.node(7, 1.5), 9:self.node(6, 1.5), 
+                      10:self.node(5, 1.5), 11:self.node(4, 1.5), 12:self.node(3, 1.5), 
+                      13:self.node(2, 1.5), 14:self.node(1, 1.5), 15:self.node(10, 1.5), 
+                      16:self.node(10, 0.5), 17:self.node(8, 0.5), 18:self.node(6, 0.5), 
+                      19:self.node(4, 0.5), 20:self.node(2, 0.5)}
+        # dictionary with net coordinates of all first vertices per face
+        self.unets = {1:self.h1, 2:self.h2, 3:self.h3, 4:self.h4, 5:self.h5, 
+                      6:self.node(9, 1), 7:self.node(8, 2), 8:self.node(7, 1), 
+                      9:self.node(6, 2), 10:self.node(5, 1), 11:self.node(4, 2), 
+                      12:self.node(3, 1), 13:self.node(2, 2), 14:self.node(1, 1), 
+                      15:self.l2, 16:self.e5, 17:self.e4, 18:self.e3, 
+                      19:self.e2, 20:self.e1}
+        
+    def node(self, x, y):
+        """
+        Get positions of a node in the icosahedron net
+        Note: for size of a triangle x = 2, then height is y = sqrt(3)
+        """
+        return [x*self.scale, y*math.sqrt(3)*self.scale]
+   
+    def plot_line(self, n1, n2, ax):
+        """
+        Plot line between nodes n1-n2 on ax
+        
+        Parameters
+        ----------
+        n1, n2: array-like
+            start and end nodes of the line to plot
+        ax: matplotlib.axis
+            axis to plot on
+        """
+        x = [n1[0], n2[0]]
+        y = [n1[1], n2[1]]
+        ax.plot(x, y, 'k-')
+        
+    def plot_net(self, ax):
+        """
+        Plot lines of the icosahedron net on ax
+        
+        Parameters
+        ----------
+        ax: matplotlib.axis
+        """
+        self.plot_line(self.l1, self.l2, ax)
+        self.plot_line(self.j1, self.j2, ax)
+        self.plot_line(self.l1, self.e1, ax)
+        self.plot_line(self.h1, self.e2, ax)
+        self.plot_line(self.h2, self.e3, ax)
+        self.plot_line(self.h3, self.e4, ax)
+        self.plot_line(self.h4, self.e5, ax)
+        self.plot_line(self.h5, self.j2, ax)
+        self.plot_line(self.l1, self.h1, ax)
+        self.plot_line(self.j1, self.h2, ax)
+        self.plot_line(self.e1, self.h3, ax)
+        self.plot_line(self.e2, self.h4, ax)
+        self.plot_line(self.e3, self.h5, ax)
+        self.plot_line(self.e4, self.l2, ax)
+        self.plot_line(self.e5, self.j2, ax)
 
-scale = 1
+    def plot_star(self, star, ax):
+        """
+        Project star onto icosahedron face, then plot on net (on ax)
+        """
+        face, proj_star = self.Ico.project_in_lcs([star.ra, star.dec])
+        net_star = face.lcs_to_net(proj_star, 
+                                   self.mnets[face.ID], self.unets[face.ID])
+        
+        ax.scatter(net_star[0], net_star[1], c='k', s=2*star.mag, marker='*')
+        pass
+    
+    def make_globe(self):
+        """
+        Create a figure, plot the net, and plot stars
+        """
+        # set up figure with the right size
+        xsize = self.j2[0] - self.l1[0]
+        ysize = self.h1[1] - self.e1[1]
+        
+        fig = plt.figure(figsize=(xsize*self.scale, ysize*self.scale))
+        ax = fig.add_subplot(111)
+        ax.set_xlim([0, xsize])
+        ax.set_ylim([0, ysize])
+        
+        self.plot_net(ax)
+        
+        stars = get_stars()
+        for s in stars:
+            self.plot_star(s, ax)
+        
+        ax.axis('off')
+        fig.savefig('paper_globe.pdf', bbox_inches='tight')
 
-# Create net
-def node(x,y):
-    return [x*scale,y*math.sqrt(3)*scale]
+if __name__=="__main__":
+    Iconet = IcosahedronNet()
+    Iconet.make_globe()
 
-
-def line(k1, k2):
-    x = [k1[0],k2[0]]
-    y = [k1[1],k2[1]]
-    plt.plot(x, y, 'k-')
-
-
-l1 = node(0,2)
-l2 = node(10,2)
-j1 = node(1,1)
-j2 = node(11,1)
-h1 = node(1,3)
-h2 = node(3,3)
-h3 = node(5,3)
-h4 = node(7,3)
-h5 = node(9,3)
-e1 = node(2,0)
-e2 = node(4,0)
-e3 = node(6,0)
-e4 = node(8,0)
-e5 = node(10,0)
-
-line(l1,l2)
-line(j1,j2)
-line(l1,e1)
-line(h1,e2)
-line(h2,e3)
-line(h3,e4)
-line(h4,e5)
-line(h5,j2)
-line(l1,h1)
-line(j1,h2)
-line(e1,h3)
-line(e2,h4)
-line(e3,h5)
-line(e4,l2)
-line(e5,j2)
-
-plt.axis((l1[0],j2[0],e1[1],h1[1]))
-
-#size = 5
-#xs = random.random(2)
-#ys = random.random(2)
-#mags = [-1.44, 10.71]
-#mags = [(-mag+12.15)*5 for mag in mags]
-#plt.scatter(xs, ys, s=mags, c='k')
-
-plt.axis('off')
-plt.savefig('paper_globe.pdf', bbox_inches='tight')
