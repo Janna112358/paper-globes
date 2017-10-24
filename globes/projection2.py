@@ -97,12 +97,9 @@ class Face(object):
         # normal is in the direction of the origin through the middle
         self.normal = self.middle / np.linalg.norm(self.middle)
         
-        # pick first axis from middle to first vertex (normalised)
-        # pick second axis orthogonal to first and to normal
-        self.u = self.vertices[0].coordinates - self.middle
-        self.size = np.linalg.norm(self.u)
-        self.u = self.u / np.linalg.norm(self.u)
-        self.v = np.cross(self.normal, self.u)
+        # pick frist axis from v1 to v2, second from v1 to v3
+        self.u = self.vertices[1].coordinates - self.vertices[0].coordinates
+        self.v = self.vertices[2].coordinates - self.vertices[0].coordinates
         
     def calc_local_vertices(self):
         """
@@ -140,11 +137,21 @@ class Face(object):
         NumPy Array: the point in the lcs of the face
         """
         # check that point is in the plane of the face
-        if not np.dot((point - self.middle), self.normal) < 1.e-12:
-            warn("WARNING, point not in the place of face")
+        assert(np.dot((point - self.middle), self.normal) < 1.e-12)
         
-        a = np.dot(point - self.vertices[0].coordintes, self.u)
-        b = np.dot(point - self.middle, self.v)
+        start_vector = self.vertices[0].coordinates
+        p = point - start_vector
+        psize = np.linalg.norm(p)
+        size = np.linalg.norm(self.u)
+        
+        angle_u = np.dot(self.u, p)
+        angle_v = np.dot(self.v, p)
+        
+        a = (4/3.) * psize * (np.cos(angle_u) - 0.5*np.cos(angle_v)) / size
+        b = (4/3.) * psize * (np.cos(angle_v) - 0.5*np.cos(angle_u)) / size
+        
+        # check the lcs coordinates are within the triagle face
+        assert((a + b) <= 1.0)
         return (a, b)
     
     def lcs_to_global(self, point):
@@ -154,7 +161,7 @@ class Face(object):
         p = self.middle + point[0]*self.u + point[1]*self.v
         return p
     
-    def lcs_to_net(self, point, mnet, unet, scale=1):
+    def lcs_to_net(self, point, v1net, v2net, v3net, scale=1):
         """        
         Convert coordinates in lcs to coordinates on the icosahedron net grid
         
@@ -162,11 +169,8 @@ class Face(object):
         ----------
         point: array-like
             2D coordinates of a point in the lcs of the face
-        mnet: array-like
-            coordinates of the middle point of the face in the net
-        unet: array-like
-            coordinates of the endpoint of u in the face of the net,
-            i.e. the coordinates of the first vertex on the net
+        v1net, v2net, v3net: array-like
+            2D coordinates of the vertices of the face on the net
         scale: int or float
             scale used in the icosahedron net
             default = 1
@@ -175,21 +179,16 @@ class Face(object):
         -------
         NumPy Array: coordinates of the point on the net
         """
-        # convert to numpy arrays if not arrays already
-        unet = np.array(unet)
-        mnet = np.array(mnet)
+        v1net = np.array(v1net)
+        v2net = np.array(v2net)
+        v3net = np.array(v3net)
         
-        # get the position of the endpoint of v in the net
-        Dxu = unet[0] - mnet[0]
-        Dyu = unet[1] - mnet[1]
-        vnet = np.array([mnet[0] - Dyu, mnet[1] + Dxu])
-        
-        # vectors pointing from to u and v
-        to_u = (unet - mnet) / self.size
-        to_v = (vnet - mnet) / self.size
+        # corresponding u and v vectors form the face lcs on the net
+        unet = v2net - v1net
+        vnet = v3net - v1net
         
         # coordinates of the point on the net
-        pnet = mnet + point[0]*to_u + point[1]*to_v
+        pnet = v1net + point[0]*unet + point[1]*vnet
         return pnet
         
 

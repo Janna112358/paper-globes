@@ -94,5 +94,6 @@ if __name__ == "__main__":
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
+    fig.savefig('test.png')
     fig.show()
 

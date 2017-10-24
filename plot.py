@@ -1,6 +1,6 @@
 import math
 import matplotlib.pyplot as plt
-from globes.projection import Icosahedron
+from globes.projection2 import Icosahedron
 from import_stars import get_stars
 
 class IcosahedronNet():
@@ -35,6 +35,15 @@ class IcosahedronNet():
         self.e3 = self.node(6, 0)
         self.e4 = self.node(8, 0)
         self.e5 = self.node(10, 0)
+        
+        self.d = self.node(2, 2)
+        self.b = self.node(4, 2)
+        self.k = self.node(6, 2)
+        self.g = self.node(8, 2)
+        self.f = self.node(3, 1)
+        self.i = self.node(5, 1)
+        self.a = self.node(7, 1)
+        self.c = self.node(9, 1)
                
         # dictionary with net coordinates of all middles per face
         self.mnets = {1:self.node(1, 2.5), 2:self.node(3, 2.5), 3:self.node(5, 2.5),
@@ -45,12 +54,20 @@ class IcosahedronNet():
                       16:self.node(10, 0.5), 17:self.node(8, 0.5), 18:self.node(6, 0.5), 
                       19:self.node(4, 0.5), 20:self.node(2, 0.5)}
         # dictionary with net coordinates of all first vertices per face
-        self.unets = {1:self.h1, 2:self.h2, 3:self.h3, 4:self.h4, 5:self.h5, 
-                      6:self.node(9, 1), 7:self.node(8, 2), 8:self.node(7, 1), 
-                      9:self.node(6, 2), 10:self.node(5, 1), 11:self.node(4, 2), 
-                      12:self.node(3, 1), 13:self.node(2, 2), 14:self.node(1, 1), 
-                      15:self.l2, 16:self.e5, 17:self.e4, 18:self.e3, 
-                      19:self.e2, 20:self.e1}
+        self.v1nets = {1:self.h1, 2:self.h2, 3:self.h3, 4:self.h4, 5:self.h5, 
+                      6:self.c, 7:self.g, 8:self.a, 9:self.k, 10:self.i, 
+                      11:self.b, 12:self.f, 13:self.d, 14:self.j1, 15:self.l2, 
+                      16:self.e5, 17:self.e4, 18:self.e3, 19:self.e2, 20:self.e1}
+        # dictionary with net coordinates of all second vertices per face
+        self.v2nets = {1:self.l1, 2:self.d, 3:self.b, 4:self.k, 5:self.g, 
+                      6:self.l2, 7:self.a, 8:self.g, 9:self.i, 10:self.k,
+                      11:self.f, 12:self.b, 13:self.j1, 14:self.d, 15:self.c,
+                      16:self.j2, 17:self.c, 18:self.a, 19:self.i, 20:self.f}
+        # dictionary with net coordinates of all third vertices per face
+        self.v3nets = {1:self.d, 2:self.b, 3:self.k, 4:self.g, 5:self.l2, 
+                      6:self.g, 7:self.c, 8:self.k, 9:self.a, 10:self.b,
+                      11:self.i, 12:self.d, 13:self.f, 14:self.l1, 15:self.j2,
+                      16:self.c, 17:self.a, 18:self.i, 19:self.f, 20:self.j1}
         
     def node(self, x, y):
         """
@@ -105,8 +122,8 @@ class IcosahedronNet():
         face, proj_star = self.Ico.project_in_lcs([star.dec, star.ra])
         if face.ID == 12:
             print proj_star
-            net_star = face.lcs_to_net(proj_star, self.mnets[face.ID], 
-                                       self.unets[face.ID], self.scale)
+            net_star = face.lcs_to_net(proj_star, self.v1nets[face.ID], 
+                            self.v2nets[face.ID], self.v3nets[face.ID])
         
             ax.scatter(net_star[0], net_star[1], c='k', s=2*star.mag, marker='*')
         else:
@@ -132,14 +149,39 @@ class IcosahedronNet():
             stars = get_stars()
             for s in stars:
                 self.plot_star(s, ax)
-                
-        ax.scatter(self.mnets[12][0], self.mnets[12][1], c='r', s=6)
-        ax.scatter(self.unets[12][0], self.unets[12][1], c='g', s=30)
         
         ax.axis('off')
         fig.savefig('paper_globe.pdf', bbox_inches='tight')
+        
+    def test_points(self, test_face_ID=12):
+        
+                # set up figure with the right size
+        xsize = self.j2[0] - self.l1[0]
+        ysize = self.h1[1] - self.e1[1]
+        
+        fig = plt.figure(figsize=(xsize*self.scale, ysize*self.scale))
+        ax = fig.add_subplot(111)
+        ax.set_xlim([0, xsize])
+        ax.set_ylim([0, ysize])
+        
+        self.plot_net(ax)
+        
+        ax.scatter(self.v1nets[12][0], self.v1nets[12][1], c='r', s=30)
+        ax.scatter(self.v2nets[12][0], self.v2nets[12][1], c='g', s=30)
+        ax.scatter(self.v3nets[12][0], self.v3nets[12][1], c='b', s=30)
+        
+        lcs_points = [[0.1, 0.1], [0.5, 0.5], [0.25, 0.25]]
+        face = self.Ico.faces[test_face_ID-1]
+        for p in lcs_points:
+            net_point = face.lcs_to_net(p, self.v1nets[test_face_ID], 
+                        self.v2nets[test_face_ID], self.v3nets[test_face_ID])
+            print net_point
+            ax.scatter(net_point[0], net_point[1], c='k', marker='*')
+        fig.savefig('test_points.pdf', bbox_inches='tight')
+        
 
 if __name__=="__main__":
     Iconet = IcosahedronNet()
-    Iconet.make_globe(stars=True)
+    #Iconet.make_globe(stars=True)
+    Iconet.test_points()
 
