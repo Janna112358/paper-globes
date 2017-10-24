@@ -1,4 +1,4 @@
-import math
+import numpy as np
 import matplotlib.pyplot as plt
 from globes.projection2 import Icosahedron
 from import_stars import get_stars
@@ -74,7 +74,7 @@ class IcosahedronNet():
         Get positions of a node in the icosahedron net
         Note: for size of a triangle x = 2, then height is y = sqrt(3)
         """
-        return [x*self.scale, y*math.sqrt(3)*self.scale]
+        return [x*self.scale, y*np.sqrt(3)*self.scale]
    
     def plot_line(self, n1, n2, ax):
         """
@@ -170,9 +170,17 @@ class IcosahedronNet():
         ax.scatter(self.v2nets[12][0], self.v2nets[12][1], c='g', s=30)
         ax.scatter(self.v3nets[12][0], self.v3nets[12][1], c='b', s=30)
         
-        lcs_points = [[0.1, 0.1], [0.5, 0.5], [0.25, 0.25]]
+        points = [[0.9*np.pi, np.pi]]
+        pface = []
+        pproj = []
+        for i, p in enumerate(points):
+            f, pp = self.Ico.project_in_lcs(p)
+            pface.append(p)
+            pproj.append(pp)
+
+        
         face = self.Ico.faces[test_face_ID-1]
-        for p in lcs_points:
+        for p in pproj:
             net_point = face.lcs_to_net(p, self.v1nets[test_face_ID], 
                         self.v2nets[test_face_ID], self.v3nets[test_face_ID])
             print net_point

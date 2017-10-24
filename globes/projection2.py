@@ -144,13 +144,24 @@ class Face(object):
         psize = np.linalg.norm(p)
         size = np.linalg.norm(self.u)
         
-        angle_u = np.dot(self.u, p)
-        angle_v = np.dot(self.v, p)
+        angle_u = np.dot(self.u, p) / (psize * size)
+        angle_v = np.dot(self.v, p) / (psize * size)
+        
+        print 'angles:', angle_u, angle_v
         
         a = (4/3.) * psize * (np.cos(angle_u) - 0.5*np.cos(angle_v)) / size
         b = (4/3.) * psize * (np.cos(angle_v) - 0.5*np.cos(angle_u)) / size
         
+        print 'middle:', self.middle
+        print 'vertices:', self.vertices[0].coordinates, self.vertices[1].coordinates, self.vertices[2].coordinates
+        print 'u:', self.u
+        print 'v:', self.v
+        print "p':", p
+        print a
+        print b
+        
         # check the lcs coordinates are within the triagle face
+        assert(a > 0 and b > 0)
         assert((a + b) <= 1.0)
         return (a, b)
     
