@@ -135,7 +135,7 @@ class Face(object):
         Returns
         -------
         NumPy Array: the point in the lcs of the face
-        """
+        """        
         # check that point is in the plane of the face
         assert(np.dot((point - self.middle), self.normal) < 1.e-12)
         
@@ -144,24 +144,21 @@ class Face(object):
         psize = np.linalg.norm(p)
         size = np.linalg.norm(self.u)
         
-        angle_u = np.dot(self.u, p) / (psize * size)
-        angle_v = np.dot(self.v, p) / (psize * size)
+        # calculate angles between p and basis vectors
+        # check that total angle is 60 degrees
+        cos_angle_u = np.dot(self.u, p) / (psize * size)
+        cos_angle_v = np.dot(self.v, p) / (psize * size)
         
-        print 'angles:', angle_u, angle_v
+        tot_angle = np.arccos(cos_angle_u) + np.arccos(cos_angle_v)
+        assert(abs(np.cos(tot_angle) - 0.5) <= 1.0e-6)
         
-        a = (4/3.) * psize * (np.cos(angle_u) - 0.5*np.cos(angle_v)) / size
-        b = (4/3.) * psize * (np.cos(angle_v) - 0.5*np.cos(angle_u)) / size
+        a = (4/3.) * psize * (cos_angle_u - 0.5*cos_angle_v) / size
+        b = (4/3.) * psize * (cos_angle_v - 0.5*cos_angle_u) / size
         
-        print 'middle:', self.middle
-        print 'vertices:', self.vertices[0].coordinates, self.vertices[1].coordinates, self.vertices[2].coordinates
-        print 'u:', self.u
-        print 'v:', self.v
-        print "p':", p
-        print a
-        print b
+
         
         # check the lcs coordinates are within the triagle face
-        assert(a > 0 and b > 0)
+        assert(a >= 0 and b >= 0)
         assert((a + b) <= 1.0)
         return (a, b)
     
@@ -270,14 +267,14 @@ class Icosahedron(object):
         """
         lowest = np.pi*2
         closest_face = self.faces[0]
-
+        
         for f in self.faces:
             pmiddle = point_to_sphere(f.middle)
-            dist = np.sqrt((pmiddle[0] - p[0])**2. + (pmiddle[1] - p[1])**2.)
+            dist = ang_distance(p, pmiddle)
             if dist < lowest:
                 lowest = dist
                 closest_face = f
-
+        
         return closest_face
     
     def project_in_3D(self, p):
@@ -322,6 +319,24 @@ class Icosahedron(object):
         face, projp3D = self.project_in_3D(p)
         return face, face.global_to_lcs(projp3D)
 
+def ang_distance(p1, p2):
+    """
+    Calculate angular distance between two point on the 1-sphere p1 and p2.
+    
+    Parameters
+    ----------
+    p1: array-like
+        point 1 in theta, phi coordinates
+    p2: array-like
+        point 2 in theta, phi coordinates
+        
+    Returns
+    -------
+    float: angular distance between p1, p2 in square radians
+    """    
+    term1 = np.sin(p1[0]) * np.sin(p2[0]) * np.cos(p1[1] - p2[1])
+    term2 = np.cos(p1[0]) * np.cos(p2[0])
+    return np.sqrt(2. - 2 * (term1 + term2))
 
 def point_to_sphere(p):
     """

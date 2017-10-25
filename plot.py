@@ -120,14 +120,10 @@ class IcosahedronNet():
         Project star onto icosahedron face, then plot on net (on ax)
         """
         face, proj_star = self.Ico.project_in_lcs([star.dec, star.ra])
-        if face.ID == 12:
-            print proj_star
-            net_star = face.lcs_to_net(proj_star, self.v1nets[face.ID], 
-                            self.v2nets[face.ID], self.v3nets[face.ID])
+        net_star = face.lcs_to_net(proj_star, self.v1nets[face.ID], 
+                                   self.v2nets[face.ID], self.v3nets[face.ID])
         
-            ax.scatter(net_star[0], net_star[1], c='k', s=2*star.mag, marker='*')
-        else:
-            pass       
+        ax.scatter(net_star[0], net_star[1], c='k', s=2*star.mag, marker='*')    
         
     
     def make_globe(self, stars=True):
@@ -153,7 +149,7 @@ class IcosahedronNet():
         ax.axis('off')
         fig.savefig('paper_globe.pdf', bbox_inches='tight')
         
-    def test_points(self, test_face_ID=12):
+    def test_points(self):
         
                 # set up figure with the right size
         xsize = self.j2[0] - self.l1[0]
@@ -170,19 +166,19 @@ class IcosahedronNet():
         ax.scatter(self.v2nets[12][0], self.v2nets[12][1], c='g', s=30)
         ax.scatter(self.v3nets[12][0], self.v3nets[12][1], c='b', s=30)
         
-        points = [[0.9*np.pi, np.pi]]
+        points = [[0.1 * np.pi * j, 0.3 * np.pi] for j in range(10)]
         pface = []
         pproj = []
         for i, p in enumerate(points):
             f, pp = self.Ico.project_in_lcs(p)
-            pface.append(p)
+            pface.append(f)
             pproj.append(pp)
+            
 
-        
-        face = self.Ico.faces[test_face_ID-1]
-        for p in pproj:
-            net_point = face.lcs_to_net(p, self.v1nets[test_face_ID], 
-                        self.v2nets[test_face_ID], self.v3nets[test_face_ID])
+        for j, p in enumerate(pproj):
+            face = pface[j]
+            net_point = face.lcs_to_net(p, self.v1nets[face.ID], 
+                        self.v2nets[face.ID], self.v3nets[face.ID])
             print net_point
             ax.scatter(net_point[0], net_point[1], c='k', marker='*')
         fig.savefig('test_points.pdf', bbox_inches='tight')
