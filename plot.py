@@ -114,6 +114,74 @@ class IcosahedronNet():
         self.plot_line(self.e3, self.h5, ax)
         self.plot_line(self.e4, self.l2, ax)
         self.plot_line(self.e5, self.j2, ax)
+    
+    def plot_connected_lines(self, nodes, ax):
+        """
+        Plot connected lines on ax from the first node in lines to the last
+        """
+        for i in range(len(nodes) - 1):
+            self.plot_line(nodes[i], nodes[i+1], ax)
+        
+    def plot_glue_bands(self, ax, w=0.4):
+        """
+        Plot lines for glue edges for the icosahedron net on ax
+        
+        Parameters
+        ----------
+        ax: matplotlib.axis
+        
+        w: float
+            size scale for the glue edges
+            default = 0.2
+        """
+        wx = 0.5 * w
+        wy = 0.5 * w
+        eps = 0.03
+             
+        j1_w1 = self.node(1-w, 1)
+        l1_w = self.node(0-wx, 2-wy)
+        self.plot_connected_lines([self.j1, j1_w1, l1_w, self.l1], ax)
+        
+        e1_w = self.node(2-w, 0)
+        j1_w2 = self.node(1-wx, 1-wy)
+        self.plot_connected_lines([self.e1, e1_w, j1_w2, self.j1], ax)
+        
+        e2_w = self.node(4-w, 0)
+        f_w = self.node(3-wx+eps, 1-wy-eps)
+        self.plot_connected_lines([self.e2, e2_w, f_w, self.f], ax)
+        
+        e3_w = self.node(6-w, 0)
+        i_w = self.node(5-wx+eps, 1-wy-eps)
+        self.plot_connected_lines([self.e3, e3_w, i_w, self.i], ax)
+        
+        e4_w = self.node(8-w, 0)
+        a_w = self.node(7-wx+eps, 1-wy-eps)
+        self.plot_connected_lines([self.e4, e4_w, a_w, self.a], ax)
+        
+        e5_w = self.node(10-w, 0)
+        c_w = self.node(9-wx+eps, 1-wy-eps)
+        self.plot_connected_lines([self.e5, e5_w, c_w, self.c], ax)
+        
+        h1_w = self.node(1+w, 3)
+        d_w = self.node(2+wx-eps, 2+wy+eps)
+        self.plot_connected_lines([self.h1, h1_w, d_w, self.d], ax)
+        
+        h2_w = self.node(3+w, 3)
+        b_w = self.node(4+wx-eps, 2+wy+eps)
+        self.plot_connected_lines([self.h2, h2_w, b_w, self.b], ax)
+        
+        h3_w = self.node(5+w, 3)
+        k_w = self.node(6+wx-eps, 2+wy+eps)
+        self.plot_connected_lines([self.h3, h3_w, k_w, self.k], ax)
+        
+        h4_w = self.node(7+w, 3)
+        g_w = self.node(8+wx-eps, 2+wy+eps)
+        self.plot_connected_lines([self.h4, h4_w, g_w, self.g], ax)
+        
+        h5_w = self.node(9+w, 3)
+        l2_w = self.node(10+wx-eps, 2+wy+eps)
+        self.plot_connected_lines([self.h5, h5_w, l2_w, self.l2], ax)
+        
 
     def plot_star(self, star, ax):
         """
@@ -123,10 +191,11 @@ class IcosahedronNet():
         net_star = face.lcs_to_net(proj_star, self.v1nets[face.ID], 
                                    self.v2nets[face.ID], self.v3nets[face.ID])
         
-        ax.scatter(net_star[0], net_star[1], c='k', s=2*star.mag, marker='*')    
+        ax.scatter(net_star[0], net_star[1], c='k', alpha=1.0,
+                   s=2*np.exp(star.mag/2.)*self.scale, marker='*')    
         
     
-    def make_globe(self, stars=True):
+    def make_globe(self, stars=True, edge_width=0.4):
         """
         Create a figure, plot the net, and plot stars
         """
@@ -136,10 +205,11 @@ class IcosahedronNet():
         
         fig = plt.figure(figsize=(xsize*self.scale, ysize*self.scale))
         ax = fig.add_subplot(111)
-        ax.set_xlim([0, xsize])
+        ax.set_xlim([-0.55*edge_width*self.scale, xsize])
         ax.set_ylim([0, ysize])
         
         self.plot_net(ax)
+        self.plot_glue_bands(ax, w=edge_width)
         
         if stars:
             stars = get_stars()
@@ -185,7 +255,7 @@ class IcosahedronNet():
         
 
 if __name__=="__main__":
-    Iconet = IcosahedronNet()
-    #Iconet.make_globe(stars=True)
-    Iconet.test_points()
+    Iconet = IcosahedronNet(scale=2)
+    Iconet.make_globe(stars=True)
+    #Iconet.test_points()
 
