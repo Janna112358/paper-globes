@@ -194,6 +194,45 @@ class IcosahedronNet():
         ax.scatter(net_star[0], net_star[1], c='k', alpha=1.0,
                    s=2*np.exp(star.mag/2.)*self.scale, marker='*')    
         
+    def plot_point(self, point, ax, c='k', s=2, marker='*'):
+        """
+        Project a point onto an icosahedron surface, then plot on the net.
+        
+        Parameters
+        ----------
+        point: array-like
+            2D theta, phi coordinates of a point on the spherical image 
+            (e.g. a star's coordinates), or array of points
+        ax: matplotlib.axis
+            axis to plot on
+        c: matplotlib color
+            can be array of colors, needs to be the same length as points
+        s: int or float, or array-like
+            markersize, scaled with Icosahedronnet.scale
+            if array-like, needs to be the same length as points
+            default=2
+        marker: matplotlib marker
+            marker for the point to plot
+            can be array of markers, needs to be same length as points
+            default: '*'
+        """
+        ms = np.array(s) * self.scale
+        
+        if np.array(point).ndim == 1:
+            face, projp = self.Ico.project_in_lcs(point)
+            net_point = face.lcs_to_net(projp, self.v1nets[face.ID], 
+                                    self.v2nets[face.ID], self.v3nets[face.ID])
+            net_points = net_point
+        
+        else:
+            net_points = np.zeros(point.shape)
+            for i, p in enumerate(point):
+                face, projp = self.Ico.project_in_lcs(p)
+                net_point = face.lcs_to_net(projp, self.v1nets[face.ID], 
+                                    self.v2nets[face.ID], self.v3nets[face.ID])
+                net_points[i] = net_point
+                
+        ax.scatter(net_points[0], net_points[1], c=c, s=ms, marker=marker)
     
     def make_globe(self, stars=True, edge_width=0.4):
         """
@@ -256,6 +295,6 @@ class IcosahedronNet():
 
 if __name__=="__main__":
     Iconet = IcosahedronNet(scale=2)
-    Iconet.make_globe(stars=True)
+    #Iconet.make_globe(stars=True)
     #Iconet.test_points()
 
