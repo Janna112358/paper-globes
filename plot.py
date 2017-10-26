@@ -181,18 +181,7 @@ class IcosahedronNet():
         h5_w = self.node(9+w, 3)
         l2_w = self.node(10+wx-eps, 2+wy+eps)
         self.plot_connected_lines([self.h5, h5_w, l2_w, self.l2], ax)
-        
-
-    def plot_star(self, star, ax):
-        """
-        Project star onto icosahedron face, then plot on net (on ax)
-        """
-        face, proj_star = self.Ico.project_in_lcs([star.dec, star.ra])
-        net_star = face.lcs_to_net(proj_star, self.v1nets[face.ID], 
-                                   self.v2nets[face.ID], self.v3nets[face.ID])
-        
-        ax.scatter(net_star[0], net_star[1], c='k', alpha=1.0,
-                   s=2*np.exp(star.mag/2.)*self.scale, marker='*')    
+          
         
     def plot_point(self, point, ax, c='k', s=2, marker='*'):
         """
@@ -234,15 +223,16 @@ class IcosahedronNet():
                 
         ax.scatter(net_points[0], net_points[1], c=c, s=ms, marker=marker)
     
-    def make_globe(self, stars=True, edge_width=0.4):
+    def make_globe(self, stars=True, edge_width=0.4, poles=True):
         """
         Create a figure, plot the net, and plot stars
         """
         # set up figure with the right size
-        xsize = self.j2[0] - self.l1[0]
-        ysize = self.h1[1] - self.e1[1]
+        xsize = 1.05 * (self.j2[0] - self.l1[0])
+        ysize = 1.05 * (self.h1[1] - self.e1[1])
         
         fig = plt.figure(figsize=(xsize*self.scale, ysize*self.scale))
+        fig.patch.set_facecolor('darkblue')
         ax = fig.add_subplot(111)
         ax.set_xlim([-0.55*edge_width*self.scale, xsize])
         ax.set_ylim([0, ysize])
@@ -253,10 +243,23 @@ class IcosahedronNet():
         if stars:
             stars = get_stars()
             for s in stars:
-                self.plot_star(s, ax)
+                if s.mag < 2:
+                    m = '*'
+                    size=30*np.exp(-s.mag)
+                else:
+                    m = 'o'
+                    size=30*np.exp(-s.mag)
+                self.plot_point([s.dec, s.ra], ax, c='w', s=size, marker=m) 
+                
+        if poles:
+            north = [0.0, 0.0]
+            south = [np.pi, 0.0]
+            self.plot_point(north, ax, c='r', s=20, marker='o')
+            self.plot_point(south, ax, c='y', s=20, marker='o')
         
         ax.axis('off')
-        fig.savefig('paper_globe.pdf', bbox_inches='tight')
+        fig.savefig('paper_globe.pdf', bbox_inches='tight', 
+                    facecolor=fig.get_facecolor(), edgecolor='none')
         
     def test_points(self):
         
@@ -291,10 +294,10 @@ class IcosahedronNet():
             print net_point
             ax.scatter(net_point[0], net_point[1], c='k', marker='*')
         fig.savefig('test_points.pdf', bbox_inches='tight')
-        
+
 
 if __name__=="__main__":
-    Iconet = IcosahedronNet(scale=2)
-    #Iconet.make_globe(stars=True)
+    Iconet = IcosahedronNet(scale=1.5)
+    Iconet.make_globe(stars=True)
     #Iconet.test_points()
 
