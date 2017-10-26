@@ -221,7 +221,7 @@ class IcosahedronNet():
         
     def test_points(self):
         
-                # set up figure with the right size
+        # set up figure with the right size
         xsize = self.j2[0] - self.l1[0]
         ysize = self.h1[1] - self.e1[1]
         
