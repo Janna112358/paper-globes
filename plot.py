@@ -76,7 +76,7 @@ class IcosahedronNet():
         """
         return [x*self.scale, y*np.sqrt(3)*self.scale]
    
-    def plot_line(self, n1, n2, ax):
+    def plot_line(self, n1, n2, ax, linestyle='-', label=None):
         """
         Plot line between nodes n1-n2 on ax
         
@@ -89,9 +89,9 @@ class IcosahedronNet():
         """
         x = [n1[0], n2[0]]
         y = [n1[1], n2[1]]
-        ax.plot(x, y, 'k-')
+        ax.plot(x, y, c='k', ls=linestyle, label=label)
         
-    def plot_net(self, ax):
+    def plot_net(self, ax, linestyle='--', label=None):
         """
         Plot lines of the icosahedron net on ax
         
@@ -99,30 +99,35 @@ class IcosahedronNet():
         ----------
         ax: matplotlib.axis
         """
-        self.plot_line(self.l1, self.l2, ax)
-        self.plot_line(self.j1, self.j2, ax)
-        self.plot_line(self.l1, self.e1, ax)
-        self.plot_line(self.h1, self.e2, ax)
-        self.plot_line(self.h2, self.e3, ax)
-        self.plot_line(self.h3, self.e4, ax)
-        self.plot_line(self.h4, self.e5, ax)
-        self.plot_line(self.h5, self.j2, ax)
-        self.plot_line(self.l1, self.h1, ax)
-        self.plot_line(self.j1, self.h2, ax)
-        self.plot_line(self.e1, self.h3, ax)
-        self.plot_line(self.e2, self.h4, ax)
-        self.plot_line(self.e3, self.h5, ax)
-        self.plot_line(self.e4, self.l2, ax)
-        self.plot_line(self.e5, self.j2, ax)
+        self.plot_line(self.l1, self.l2, ax, linestyle=linestyle, label=label)
+        self.plot_line(self.j1, self.j2, ax, linestyle=linestyle)
+        self.plot_line(self.l1, self.e1, ax, linestyle=linestyle)
+        self.plot_line(self.h1, self.e2, ax, linestyle=linestyle)
+        self.plot_line(self.h2, self.e3, ax, linestyle=linestyle)
+        self.plot_line(self.h3, self.e4, ax, linestyle=linestyle)
+        self.plot_line(self.h4, self.e5, ax, linestyle=linestyle)
+        self.plot_line(self.h5, self.j2, ax, linestyle=linestyle)
+        self.plot_line(self.l1, self.h1, ax, linestyle=linestyle)
+        self.plot_line(self.j1, self.h2, ax, linestyle=linestyle)
+        self.plot_line(self.e1, self.h3, ax, linestyle=linestyle)
+        self.plot_line(self.e2, self.h4, ax, linestyle=linestyle)
+        self.plot_line(self.e3, self.h5, ax, linestyle=linestyle)
+        self.plot_line(self.e4, self.l2, ax, linestyle=linestyle)
+        self.plot_line(self.e5, self.j2, ax, linestyle=linestyle)
     
-    def plot_connected_lines(self, nodes, ax):
+    def plot_connected_lines(self, nodes, ax, linestyle='-', label=None):
         """
         Plot connected lines on ax from the first node in lines to the last
         """
         for i in range(len(nodes) - 1):
-            self.plot_line(nodes[i], nodes[i+1], ax)
+            if i == 0:
+                l = label
+            else:
+                l = None
+            self.plot_line(nodes[i], nodes[i+1], ax, 
+                           linestyle=linestyle, label=l)
         
-    def plot_glue_bands(self, ax, w=0.4):
+    def plot_glue_bands(self, ax, w=0.4, linestyle='-', label=None):
         """
         Plot lines for glue edges for the icosahedron net on ax
         
@@ -139,48 +144,62 @@ class IcosahedronNet():
         eps = 0.03
              
         j1_w1 = self.node(1-w, 1)
-        l1_w = self.node(0-wx, 2-wy)
-        self.plot_connected_lines([self.j1, j1_w1, l1_w, self.l1], ax)
+        l1_w2 = self.node(0-wx, 2-wy)
+        self.plot_connected_lines([self.j1, j1_w1, l1_w2, self.l1], ax, 
+                                  linestyle=linestyle, label=label)
         
         e1_w = self.node(2-w, 0)
         j1_w2 = self.node(1-wx, 1-wy)
-        self.plot_connected_lines([self.e1, e1_w, j1_w2, self.j1], ax)
+        self.plot_connected_lines([self.e1, e1_w, j1_w2, self.j1], ax, 
+                                  linestyle=linestyle)
         
         e2_w = self.node(4-w, 0)
         f_w = self.node(3-wx+eps, 1-wy-eps)
-        self.plot_connected_lines([self.e2, e2_w, f_w, self.f], ax)
+        self.plot_connected_lines([self.e2, e2_w, f_w, self.f], ax, 
+                                  linestyle=linestyle)
         
         e3_w = self.node(6-w, 0)
         i_w = self.node(5-wx+eps, 1-wy-eps)
-        self.plot_connected_lines([self.e3, e3_w, i_w, self.i], ax)
+        self.plot_connected_lines([self.e3, e3_w, i_w, self.i], ax, 
+                                  linestyle=linestyle)
         
         e4_w = self.node(8-w, 0)
         a_w = self.node(7-wx+eps, 1-wy-eps)
-        self.plot_connected_lines([self.e4, e4_w, a_w, self.a], ax)
+        self.plot_connected_lines([self.e4, e4_w, a_w, self.a], ax, 
+                                  linestyle=linestyle)
         
         e5_w = self.node(10-w, 0)
         c_w = self.node(9-wx+eps, 1-wy-eps)
-        self.plot_connected_lines([self.e5, e5_w, c_w, self.c], ax)
+        self.plot_connected_lines([self.e5, e5_w, c_w, self.c], ax, 
+                                  linestyle=linestyle)
         
-        h1_w = self.node(1+w, 3)
+        # double edge on this triangle for easier glueing
+        l1_w1 = self.node(0-wx, 2+wy)
+        h1_w1 = self.node(1-w, 3)
+        self.plot_connected_lines([self.l1, l1_w1, h1_w1, self.h1], ax, 
+                                  linestyle=linestyle)
+        
+        h1_w2 = self.node(1+w, 3)
         d_w = self.node(2+wx-eps, 2+wy+eps)
-        self.plot_connected_lines([self.h1, h1_w, d_w, self.d], ax)
+        self.plot_connected_lines([self.h1, h1_w2, d_w, self.d], ax, 
+                                  linestyle=linestyle)
         
         h2_w = self.node(3+w, 3)
         b_w = self.node(4+wx-eps, 2+wy+eps)
-        self.plot_connected_lines([self.h2, h2_w, b_w, self.b], ax)
+        self.plot_connected_lines([self.h2, h2_w, b_w, self.b], ax, 
+                                  linestyle=linestyle)
         
         h3_w = self.node(5+w, 3)
         k_w = self.node(6+wx-eps, 2+wy+eps)
-        self.plot_connected_lines([self.h3, h3_w, k_w, self.k], ax)
+        self.plot_connected_lines([self.h3, h3_w, k_w, self.k], ax, 
+                                  linestyle=linestyle)
         
         h4_w = self.node(7+w, 3)
         g_w = self.node(8+wx-eps, 2+wy+eps)
-        self.plot_connected_lines([self.h4, h4_w, g_w, self.g], ax)
+        self.plot_connected_lines([self.h4, h4_w, g_w, self.g], ax, 
+                                  linestyle=linestyle)
         
-        h5_w = self.node(9+w, 3)
-        l2_w = self.node(10+wx-eps, 2+wy+eps)
-        self.plot_connected_lines([self.h5, h5_w, l2_w, self.l2], ax)
+        # leave out edge on h5 face, sine the h1 face has both
           
         
     def plot_point(self, point, ax, c='k', s=2, marker='*'):
@@ -237,8 +256,14 @@ class IcosahedronNet():
         ax.set_xlim([-0.55*edge_width*self.scale, xsize])
         ax.set_ylim([0, ysize])
         
-        self.plot_net(ax)
-        self.plot_glue_bands(ax, w=edge_width)
+        self.plot_net(ax, linestyle='--', label = 'Fold me')
+        self.plot_glue_bands(ax, w=edge_width, linestyle='-', label='Cut me')
+        ax.legend(loc='best')
+        
+        # text for last triangle to glue
+        glue_text_pos = self.node(9.3, 2.8)
+        ax.text(glue_text_pos[0], glue_text_pos[1], 'Glue me last!', 
+                rotation=-60, color='w')
         
         if stars:
             stars = get_stars()
