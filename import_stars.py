@@ -31,7 +31,7 @@ def get_stars():
 
         # convert to theta, phi coordinates
         ra_frac = math.radians(ra)
-        dec_frac = math.radians(dec) + math.pi/2.
+        dec_frac = math.pi/2. - math.radians(dec)
         
         s = Star(ra=ra_frac, dec=dec_frac, mag=m)
         stars.append(s)

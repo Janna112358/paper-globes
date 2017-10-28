@@ -231,7 +231,7 @@ class IcosahedronNet():
         # leave out edge on h5 face, sine the h1 face has both
           
         
-    def plot_point(self, point, ax, c='k', s=2, marker='*'):
+    def plot_point(self, point, ax, c='k', s=2, marker='*', label=None):
         """
         Project a point onto an icosahedron surface, then plot on the net.
         
@@ -269,7 +269,8 @@ class IcosahedronNet():
                                     self.v2nets[face.ID], self.v3nets[face.ID])
                 net_points[i] = net_point
                 
-        ax.scatter(net_points[0], net_points[1], c=c, s=ms, marker=marker)
+        ax.scatter(net_points[0], net_points[1], 
+                   c=c, s=ms, marker=marker, label=label)
     
     def make_globe(self, stars=True, poles=True, edge_width=0.4, 
                    starc='w', linec = 'k', bgc='darkblue'):
@@ -298,8 +299,8 @@ class IcosahedronNet():
             default: 'darkblue'
         """
         # set up figure with the right size
-        xsize = 1.05 * (self.j2[0] - self.l1[0])
-        ysize = 1.05 * (self.h1[1] - self.e1[1])
+        xsize = 1.02 * (self.j2[0] - self.l1[0])
+        ysize = 1.02 * (self.h1[1] - self.e1[1])
         
         fig = plt.figure(figsize=(xsize*self.scale, ysize*self.scale))
         fig.patch.set_facecolor(bgc)
@@ -310,12 +311,17 @@ class IcosahedronNet():
         # Plot icosahedron net and glue bands
         self.plot_net(ax, c=linec, ls='--', label = 'Fold me')
         self.plot_glue_bands(ax, w=edge_width, c=linec, ls='-', label='Cut me')
-        ax.legend(loc='best')
         
         # text for last triangle to glue
         glue_text_pos = self.node(9.3, 2.8)
         ax.text(glue_text_pos[0], glue_text_pos[1], 'Glue me last!', 
-                rotation=-60, color=starc)
+                rotation=-60, color=starc, fontsize=14)
+        
+        # generic text
+        title_text_pos = self.node(0.0, 1.0)
+        ax.text(title_text_pos[0], title_text_pos[1], 'Galaxy paper globe', 
+                rotation=-60, color=starc, fontsize=20)
+        
         
         # Load, project and plot stars
         if stars:
@@ -334,9 +340,10 @@ class IcosahedronNet():
         if poles:
             north = [0.0, 0.0]
             south = [np.pi, 0.0]
-            self.plot_point(north, ax, c='r', s=20, marker='o')
-            self.plot_point(south, ax, c='y', s=20, marker='o')
+            self.plot_point(north, ax, c='r', s=20, marker='o', label='North')
+            self.plot_point(south, ax, c='y', s=20, marker='o', label='South')
         
+        ax.legend(loc=[0.9, 0.8], fontsize=14)
         ax.axis('off')
         fig.savefig('paper_globe.pdf', bbox_inches='tight', 
                     facecolor=fig.get_facecolor(), edgecolor='none')
