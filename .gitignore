@@ -4,6 +4,4 @@ polyhedra_tatham/
 *.ipynb
 *.pyc
 *.pdf
-
-
-*.pdf
+*test*
