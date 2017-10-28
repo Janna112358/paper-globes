@@ -76,7 +76,7 @@ class IcosahedronNet():
         """
         return [x*self.scale, y*np.sqrt(3)*self.scale]
    
-    def plot_line(self, n1, n2, ax, linestyle='-', label=None):
+    def plot_line(self, n1, n2, ax, c='k', ls='-', label=None):
         """
         Plot line between nodes n1-n2 on ax
         
@@ -86,38 +86,62 @@ class IcosahedronNet():
             start and end nodes of the line to plot
         ax: matplotlib.axis
             axis to plot on
+        c: matplotlib colour (str)
+            default = 'k' (black)
+        ls: matplotlib linestyle (str)
+            default = '-' (solid)
+        label: str
+            default = None 
         """
         x = [n1[0], n2[0]]
         y = [n1[1], n2[1]]
-        ax.plot(x, y, c='k', ls=linestyle, label=label)
+        ax.plot(x, y, c=c, ls=ls, label=label)
         
-    def plot_net(self, ax, linestyle='--', label=None):
+    def plot_net(self, ax, c='k', ls='--', label=None):
         """
         Plot lines of the icosahedron net on ax
         
         Parameters
         ----------
         ax: matplotlib.axis
+        c: matplotlib color (str)
+            default = 'k' (black)
+        ls: matplotlib linestyle (str)
+            default = '--' (dashed)
+        label: str
+            default = None
         """
-        self.plot_line(self.l1, self.l2, ax, linestyle=linestyle, label=label)
-        self.plot_line(self.j1, self.j2, ax, linestyle=linestyle)
-        self.plot_line(self.l1, self.e1, ax, linestyle=linestyle)
-        self.plot_line(self.h1, self.e2, ax, linestyle=linestyle)
-        self.plot_line(self.h2, self.e3, ax, linestyle=linestyle)
-        self.plot_line(self.h3, self.e4, ax, linestyle=linestyle)
-        self.plot_line(self.h4, self.e5, ax, linestyle=linestyle)
-        self.plot_line(self.h5, self.j2, ax, linestyle=linestyle)
-        self.plot_line(self.l1, self.h1, ax, linestyle=linestyle)
-        self.plot_line(self.j1, self.h2, ax, linestyle=linestyle)
-        self.plot_line(self.e1, self.h3, ax, linestyle=linestyle)
-        self.plot_line(self.e2, self.h4, ax, linestyle=linestyle)
-        self.plot_line(self.e3, self.h5, ax, linestyle=linestyle)
-        self.plot_line(self.e4, self.l2, ax, linestyle=linestyle)
-        self.plot_line(self.e5, self.j2, ax, linestyle=linestyle)
+        self.plot_line(self.l1, self.l2, ax, c=c, ls=ls, label=label)
+        self.plot_line(self.j1, self.j2, ax, c=c, ls=ls)
+        self.plot_line(self.l1, self.e1, ax, c=c, ls=ls)
+        self.plot_line(self.h1, self.e2, ax, c=c, ls=ls)
+        self.plot_line(self.h2, self.e3, ax, c=c, ls=ls)
+        self.plot_line(self.h3, self.e4, ax, c=c, ls=ls)
+        self.plot_line(self.h4, self.e5, ax, c=c, ls=ls)
+        self.plot_line(self.h5, self.j2, ax, c=c, ls=ls)
+        self.plot_line(self.l1, self.h1, ax, c=c, ls=ls)
+        self.plot_line(self.j1, self.h2, ax, c=c, ls=ls)
+        self.plot_line(self.e1, self.h3, ax, c=c, ls=ls)
+        self.plot_line(self.e2, self.h4, ax, c=c, ls=ls)
+        self.plot_line(self.e3, self.h5, ax, c=c, ls=ls)
+        self.plot_line(self.e4, self.l2, ax, c=c, ls=ls)
+        self.plot_line(self.e5, self.j2, ax, c=c, ls=ls)
     
-    def plot_connected_lines(self, nodes, ax, linestyle='-', label=None):
+    def plot_connected_lines(self, nodes, ax, c='k', ls='-', label=None):
         """
-        Plot connected lines on ax from the first node in lines to the last
+        Plot connected lines on ax from the first node in lines to the last.
+        
+        Parameters
+        ----------
+        nodes: list of nodes
+            each node is a 2D array-like object with coordinates on the net.
+        ax: matplotlib.axis
+        c: matplotlib colour (str)
+            default = 'k' (black)
+        ls: matplotlib linestyle (str)
+            default = '-' (solid)
+        label: str
+            default = None
         """
         for i in range(len(nodes) - 1):
             if i == 0:
@@ -125,19 +149,24 @@ class IcosahedronNet():
             else:
                 l = None
             self.plot_line(nodes[i], nodes[i+1], ax, 
-                           linestyle=linestyle, label=l)
+                           c=c, ls=ls, label=l)
         
-    def plot_glue_bands(self, ax, w=0.4, linestyle='-', label=None):
+    def plot_glue_bands(self, ax, w=0.4, c='k', ls='-', label=None):
         """
         Plot lines for glue edges for the icosahedron net on ax
         
         Parameters
         ----------
         ax: matplotlib.axis
-        
         w: float
             size scale for the glue edges
             default = 0.2
+        c: matplotlib colour (str)
+            default = 'k' (black)
+        ls: matplotlib linestyle (str)
+            default = '-' (solid)
+        label: str
+            default = None
         """
         wx = 0.5 * w
         wy = 0.5 * w
@@ -146,58 +175,58 @@ class IcosahedronNet():
         j1_w1 = self.node(1-w, 1)
         l1_w2 = self.node(0-wx, 2-wy)
         self.plot_connected_lines([self.j1, j1_w1, l1_w2, self.l1], ax, 
-                                  linestyle=linestyle, label=label)
+                                  c=c, ls=ls, label=label)
         
         e1_w = self.node(2-w, 0)
         j1_w2 = self.node(1-wx, 1-wy)
         self.plot_connected_lines([self.e1, e1_w, j1_w2, self.j1], ax, 
-                                  linestyle=linestyle)
+                                  c=c, ls=ls)
         
         e2_w = self.node(4-w, 0)
         f_w = self.node(3-wx+eps, 1-wy-eps)
         self.plot_connected_lines([self.e2, e2_w, f_w, self.f], ax, 
-                                  linestyle=linestyle)
+                                  c=c, ls=ls)
         
         e3_w = self.node(6-w, 0)
         i_w = self.node(5-wx+eps, 1-wy-eps)
         self.plot_connected_lines([self.e3, e3_w, i_w, self.i], ax, 
-                                  linestyle=linestyle)
+                                  c=c, ls=ls)
         
         e4_w = self.node(8-w, 0)
         a_w = self.node(7-wx+eps, 1-wy-eps)
         self.plot_connected_lines([self.e4, e4_w, a_w, self.a], ax, 
-                                  linestyle=linestyle)
+                                  c=c, ls=ls)
         
         e5_w = self.node(10-w, 0)
         c_w = self.node(9-wx+eps, 1-wy-eps)
         self.plot_connected_lines([self.e5, e5_w, c_w, self.c], ax, 
-                                  linestyle=linestyle)
+                                  c=c, ls=ls)
         
         # double edge on this triangle for easier glueing
         l1_w1 = self.node(0-wx, 2+wy)
         h1_w1 = self.node(1-w, 3)
         self.plot_connected_lines([self.l1, l1_w1, h1_w1, self.h1], ax, 
-                                  linestyle=linestyle)
+                                  c=c, ls=ls)
         
         h1_w2 = self.node(1+w, 3)
         d_w = self.node(2+wx-eps, 2+wy+eps)
         self.plot_connected_lines([self.h1, h1_w2, d_w, self.d], ax, 
-                                  linestyle=linestyle)
+                                  c=c, ls=ls)
         
         h2_w = self.node(3+w, 3)
         b_w = self.node(4+wx-eps, 2+wy+eps)
         self.plot_connected_lines([self.h2, h2_w, b_w, self.b], ax, 
-                                  linestyle=linestyle)
+                                  c=c, ls=ls)
         
         h3_w = self.node(5+w, 3)
         k_w = self.node(6+wx-eps, 2+wy+eps)
         self.plot_connected_lines([self.h3, h3_w, k_w, self.k], ax, 
-                                  linestyle=linestyle)
+                                  c=c, ls=ls)
         
         h4_w = self.node(7+w, 3)
         g_w = self.node(8+wx-eps, 2+wy+eps)
         self.plot_connected_lines([self.h4, h4_w, g_w, self.g], ax, 
-                                  linestyle=linestyle)
+                                  c=c, ls=ls)
         
         # leave out edge on h5 face, sine the h1 face has both
           
@@ -242,40 +271,66 @@ class IcosahedronNet():
                 
         ax.scatter(net_points[0], net_points[1], c=c, s=ms, marker=marker)
     
-    def make_globe(self, stars=True, edge_width=0.4, poles=True):
+    def make_globe(self, stars=True, poles=True, edge_width=0.4, 
+                   starc='w', linec = 'k', bgc='darkblue'):
         """
         Create a figure, plot the net, and plot stars
+        
+        Parameters
+        ----------
+        stars: bool
+            project and plot stars or not
+            default = True
+        poles:
+            plot dots for north and south pole or not
+            default = True
+        edge_width: float
+            width for glue edged of the net, scales with net scale
+            default = 0.4
+        starc: matplotlib colour
+            colour for stars
+            default: 'w' (white)
+        linec: matplotlib colour
+            colour for net lines and glue bands
+            default: 'k' (black)
+        bgc: matplotlib colour
+            colour for background
+            default: 'darkblue'
         """
         # set up figure with the right size
         xsize = 1.05 * (self.j2[0] - self.l1[0])
         ysize = 1.05 * (self.h1[1] - self.e1[1])
         
         fig = plt.figure(figsize=(xsize*self.scale, ysize*self.scale))
-        fig.patch.set_facecolor('darkblue')
+        fig.patch.set_facecolor(bgc)
         ax = fig.add_subplot(111)
         ax.set_xlim([-0.55*edge_width*self.scale, xsize])
         ax.set_ylim([0, ysize])
         
-        self.plot_net(ax, linestyle='--', label = 'Fold me')
-        self.plot_glue_bands(ax, w=edge_width, linestyle='-', label='Cut me')
+        # Plot icosahedron net and glue bands
+        self.plot_net(ax, c=linec, ls='--', label = 'Fold me')
+        self.plot_glue_bands(ax, w=edge_width, c=linec, ls='-', label='Cut me')
         ax.legend(loc='best')
         
         # text for last triangle to glue
         glue_text_pos = self.node(9.3, 2.8)
         ax.text(glue_text_pos[0], glue_text_pos[1], 'Glue me last!', 
-                rotation=-60, color='w')
+                rotation=-60, color=starc)
         
+        # Load, project and plot stars
         if stars:
             stars = get_stars()
             for s in stars:
+                # largest stars with star marker, others with dot
                 if s.mag < 2:
                     m = '*'
                     size=30*np.exp(-s.mag)
                 else:
                     m = 'o'
                     size=30*np.exp(-s.mag)
-                self.plot_point([s.dec, s.ra], ax, c='w', s=size, marker=m) 
-                
+                self.plot_point([s.dec, s.ra], ax, c=starc, s=size, marker=m) 
+        
+        # plot north and south poles as dots
         if poles:
             north = [0.0, 0.0]
             south = [np.pi, 0.0]
@@ -286,7 +341,20 @@ class IcosahedronNet():
         fig.savefig('paper_globe.pdf', bbox_inches='tight', 
                     facecolor=fig.get_facecolor(), edgecolor='none')
         
-    def test_points(self):
+    def test_points(self, pointc = 'k', linec='k', bgc='w'):
+        """
+        Plot a net with some test points
+        
+        pointc: matplotlib colour (str)
+            colour for the points
+            default = 'k' (black)
+        linec: matplotlib colour (str)
+            colour for the lines (of the net)
+            default = 'k' (black)
+        bgc: matplotlib colour (str)
+            background colour
+            default = 'w' (white)
+        """
         
         # set up figure with the right size
         xsize = self.j2[0] - self.l1[0]
@@ -297,12 +365,15 @@ class IcosahedronNet():
         ax.set_xlim([0, xsize])
         ax.set_ylim([0, ysize])
         
-        self.plot_net(ax)
+        # plot net and glue bands
+        self.plot_net(ax, c=linec, ls='--')
+        self.plot_glue_band(ax, c=linec, ls='-')
         
         ax.scatter(self.v1nets[12][0], self.v1nets[12][1], c='r', s=30)
         ax.scatter(self.v2nets[12][0], self.v2nets[12][1], c='g', s=30)
         ax.scatter(self.v3nets[12][0], self.v3nets[12][1], c='b', s=30)
         
+        # list some points for testing, project them onto the icosahedron
         points = [[0.1 * np.pi * j, 0.3 * np.pi] for j in range(10)]
         pface = []
         pproj = []
@@ -311,12 +382,11 @@ class IcosahedronNet():
             pface.append(f)
             pproj.append(pp)
             
-
+        # plot projected point onto the net
         for j, p in enumerate(pproj):
             face = pface[j]
             net_point = face.lcs_to_net(p, self.v1nets[face.ID], 
                         self.v2nets[face.ID], self.v3nets[face.ID])
-            print net_point
             ax.scatter(net_point[0], net_point[1], c='k', marker='*')
         fig.savefig('test_points.pdf', bbox_inches='tight')
 
