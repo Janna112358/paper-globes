@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import numpy as np
+import sys
 from warnings import warn
 
 
@@ -80,6 +81,13 @@ class Face(object):
         self.numVertices = len(self.vertices)
         self.ID = ID
         
+        # check that at least three vertices are given
+        try:
+            assert(self.numVertices >= 3)
+        except AssertionError:
+            print("Can not creatre face with less than three vertices.")
+            sys.exit(1)
+        
         self.calc_system()
 
     def calc_system(self):
@@ -89,7 +97,7 @@ class Face(object):
         """        
         
         # middle as average of the vertices
-        self.middle = np.zeros(3)
+        self.middle = np.zeros(self.numVertices)
         for v in self.vertices:
             self.middle += v.coordinates
         self.middle = self.middle / self.numVertices
@@ -100,6 +108,9 @@ class Face(object):
         # pick frist axis from v1 to v2, second from v1 to v3
         self.u = self.vertices[1].coordinates - self.vertices[0].coordinates
         self.v = self.vertices[2].coordinates - self.vertices[0].coordinates
+        
+        self.angle = np.arccos(np.dot(self.u, self.v) / 
+                             (np.linalg.norm(self.u) * np.linalg.norm(self.v)))
         
     def calc_local_vertices(self):
         """
@@ -117,8 +128,8 @@ class Face(object):
         
         D = np.linalg.norm(self.middle - self.vertices[0].coordinates)
         v1 = np.array([D, 0])
-        v2 = np.array([-D*0.5, -D*0.5*np.sqrt(3.0)])
-        v3 = np.array([-D*0.5, D*0.5*np.sqrt(3.0)])
+        v2 = np.array([-D*np.cos(self.angle), -D*np.sin(self.angle)])
+        v3 = np.array([-D*np.cos(self.angle), D*np.sin(self.angle)])
         
         return [v1, v2, v3]         
     
@@ -150,12 +161,12 @@ class Face(object):
         cos_angle_v = np.dot(self.v, p) / (psize * size)
         
         tot_angle = np.arccos(cos_angle_u) + np.arccos(cos_angle_v)
-        assert(abs(np.cos(tot_angle) - 0.5) <= 1.0e-6)
+        assert(abs(np.cos(tot_angle) - np.cos(self.angle)) <= 1.0e-6)
         
-        a = (4/3.) * psize * (cos_angle_u - 0.5*cos_angle_v) / size
-        b = (4/3.) * psize * (cos_angle_v - 0.5*cos_angle_u) / size
-        
-
+        a = (4/3.) * psize * (cos_angle_u - 
+            np.cos(self.angle)*cos_angle_v) / size
+        b = (4/3.) * psize * (cos_angle_v - 
+            np.cos(self.angle)*cos_angle_u) / size
         
         # check the lcs coordinates are within the triagle face
         assert(a >= 0 and b >= 0)
