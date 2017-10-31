@@ -147,8 +147,10 @@ class Face(object):
         -------
         NumPy Array: the point in the lcs of the face
         """        
+        
+        eps = 1.0e-6
         # check that point is in the plane of the face
-        assert(np.dot((point - self.middle), self.normal) < 1.e-12)
+        assert(np.dot((point - self.middle), self.normal) < eps)
         
         start_vector = self.vertices[0].coordinates
         p = point - start_vector
@@ -156,17 +158,17 @@ class Face(object):
         size = np.linalg.norm(self.u)
         
         # calculate angles between p and basis vectors
-        # check that total angle is 60 degrees
+        # check that total angle is the same as calculated when initializing
         cos_angle_u = np.dot(self.u, p) / (psize * size)
         cos_angle_v = np.dot(self.v, p) / (psize * size)
-        
         tot_angle = np.arccos(cos_angle_u) + np.arccos(cos_angle_v)
-        assert(abs(np.cos(tot_angle) - np.cos(self.angle)) <= 1.0e-6)
+        cos_tangle = np.cos(self.angle)
+        assert(abs(np.cos(tot_angle) - cos_tangle) < eps)
         
-        a = (4/3.) * psize * (cos_angle_u - 
-            np.cos(self.angle)*cos_angle_v) / size
-        b = (4/3.) * psize * (cos_angle_v - 
-            np.cos(self.angle)*cos_angle_u) / size
+        
+        factor = psize / (1 - cos_tangle**2.0)
+        a = factor * (cos_angle_u - np.cos(self.angle)*cos_angle_v) / size
+        b = factor * (cos_angle_v - np.cos(self.angle)*cos_angle_u) / size
         
         # check the lcs coordinates are within the triagle face
         assert(a >= 0 and b >= 0)

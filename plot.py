@@ -299,14 +299,18 @@ class IcosahedronNet():
             default: 'darkblue'
         """
         # set up figure with the right size
-        xsize = 1.02 * (self.j2[0] - self.l1[0])
-        ysize = 1.02 * (self.h1[1] - self.e1[1])
+        xspan = (self.j2[0] - self.l1[0])
+        yspan = (self.h1[1] - self.e1[1])
+        xsize = 1.02 * xspan
+        ysize = 1.02 * yspan
         
         fig = plt.figure(figsize=(xsize*self.scale, ysize*self.scale))
-        fig.patch.set_facecolor(bgc)
         ax = fig.add_subplot(111)
         ax.set_xlim([-0.55*edge_width*self.scale, xsize])
         ax.set_ylim([0, ysize])
+        # band for the background colour, but somehow stars do not appear over it
+        #ax.axhspan(0.0, yspan, xmin=0.0, xmax=xspan/xsize, facecolor=bgc)
+        fig.patch.set_facecolor(bgc)
         
         # Plot icosahedron net and glue bands
         self.plot_net(ax, c=linec, ls='--', label = 'Fold me')
