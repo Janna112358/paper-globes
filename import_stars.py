@@ -1,6 +1,6 @@
 from collections import namedtuple
 import csv
-import math
+import numpy as np
 
 
 def get_stars():
@@ -8,7 +8,7 @@ def get_stars():
     with open('./stars.dat', 'rb') as f:
         data = list(csv.reader(f))
 
-    Star = namedtuple('Star', 'ra dec mag')
+    Star = namedtuple('Star', 'ra dec mag name')
     stars = []
 
     for i, e in enumerate(data):
@@ -21,19 +21,26 @@ def get_stars():
             dec = dec.replace(' ', '', 1)
 
         rh, rm, rs = [float(r) for r in ra.split(' ')]
+        # right ascension in degrees (times 360 deg/ 24 hours)
         ra = rh*15 + rm/4 + rs/240
         dd, dm, ds = [float(d) for d in dec.split(' ')]
         if dd < 0:
             sign = -1
         else:
             sign = 1
-        dec = dd + sign*dm/60 + sign*ds/3600
+        # declination in degrees
+        dec = dd + sign*dm/60. + sign*ds/3600.
 
         # convert to theta, phi coordinates
-        ra_frac = math.radians(ra)
-        dec_frac = math.pi/2. - math.radians(dec)
+        ra_frac = np.radians(ra)
+        dec_frac = np.pi/2. - np.radians(dec)
         
-        s = Star(ra=ra_frac, dec=dec_frac, mag=m)
+        try:
+            name = e[3].strip()
+        except:
+            name=None
+        
+        s = Star(ra=ra_frac, dec=dec_frac, mag=m, name=name)
         stars.append(s)
         
     return stars

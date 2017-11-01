@@ -231,7 +231,8 @@ class IcosahedronNet():
         # leave out edge on h5 face, sine the h1 face has both
           
         
-    def plot_point(self, point, ax, c='k', s=2, marker='*', label=None):
+    def plot_point(self, point, ax, c='k', s=2, marker='*', 
+                   label=None, text=None):
         """
         Project a point onto an icosahedron surface, then plot on the net.
         
@@ -271,6 +272,40 @@ class IcosahedronNet():
                 
         ax.scatter(net_points[0], net_points[1], 
                    c=c, s=ms, marker=marker, label=label)
+        # plot names for some stars
+        if text == 'Sirius':
+            ax.text(net_points[0]+0.02, net_points[1]+0.02, text, 
+                    color=c, rotation=60)
+        elif text == 'Vega':
+            ax.text(net_points[0]-0.25, net_points[1]+0.1, text, 
+                    color=c, rotation=240)
+        elif text == 'Canopus':
+            ax.text(net_points[0]-0.05, net_points[1]+0.05, text, 
+                    color=c, rotation=60)
+        elif text=='Alpha Centauri':
+            ax.text(net_points[0]-0.22, net_points[1]+0.12, text, 
+                    color=c, rotation=-60)
+        elif text=='Arcturus':
+            ax.text(net_points[0]-0.22, net_points[1]+0.12, text, 
+                    color=c, rotation=-60)
+        elif text=='Capella':
+            ax.text(net_points[0]-0.22, net_points[1]+0.12, text, 
+                    color=c, rotation=240)
+        elif text=='Rigel':
+            ax.text(net_points[0], net_points[1], text, 
+                    color=c, rotation=60)
+        elif text=='Procyon':
+            ax.text(net_points[0]-0.2, net_points[1]+0.05, text, 
+                    color=c, rotation=300)
+        elif text=='Achernar':
+            ax.text(net_points[0]-0.2, net_points[1], text, 
+                    color=c, rotation=300)
+        elif text=='Betelgeuse':
+            ax.text(net_points[0]-0.1, net_points[1]+0.1, text, 
+                    color=c, rotation=60)
+        elif text is not None:
+            ax.text(net_points[0], net_points[1], text, 
+                    color=c, rotation=60)
     
     def make_globe(self, stars=True, poles=True, edge_width=0.4, 
                    starc='w', linec = 'k', bgc='darkblue'):
@@ -308,9 +343,8 @@ class IcosahedronNet():
         ax = fig.add_subplot(111)
         ax.set_xlim([-0.55*edge_width*self.scale, xsize])
         ax.set_ylim([0, ysize])
-        # band for the background colour, but somehow stars do not appear over it
-        #ax.axhspan(0.0, yspan, xmin=0.0, xmax=xspan/xsize, facecolor=bgc)
-        fig.patch.set_facecolor(bgc)
+        ax.axhspan(0.0, yspan, xmin=0.0, xmax=xspan/xsize, 
+                   facecolor=bgc, zorder=0) # lowest zorder drawn first
         
         # Plot icosahedron net and glue bands
         self.plot_net(ax, c=linec, ls='--', label = 'Fold me')
@@ -332,13 +366,14 @@ class IcosahedronNet():
             stars = get_stars()
             for s in stars:
                 # largest stars with star marker, others with dot
-                if s.mag < 2:
+                if s.mag < 2.5:
                     m = '*'
                     size=30*np.exp(-s.mag)
                 else:
                     m = 'o'
                     size=30*np.exp(-s.mag)
-                self.plot_point([s.dec, s.ra], ax, c=starc, s=size, marker=m) 
+                self.plot_point([s.dec, s.ra], ax, 
+                                c=starc, s=size, marker=m, text=s.name) 
         
         # plot north and south poles as dots
         if poles:
@@ -349,6 +384,7 @@ class IcosahedronNet():
         
         ax.legend(loc=[0.9, 0.8], fontsize=14)
         ax.axis('off')
+        fig.tight_layout()
         fig.savefig('paper_globe.pdf', bbox_inches='tight', 
                     facecolor=fig.get_facecolor(), edgecolor='none')
         
