@@ -97,7 +97,7 @@ class IcosahedronNet():
         y = [n1[1], n2[1]]
         ax.plot(x, y, c=c, ls=ls, label=label)
         
-    def plot_net(self, ax, c='k', ls='--', label=None):
+    def plot_net(self, ax, c='k', fold_ls = '--', cut_ls = '-', label=None):
         """
         Plot lines of the icosahedron net on ax
         
@@ -106,26 +106,32 @@ class IcosahedronNet():
         ax: matplotlib.axis
         c: matplotlib color (str)
             default = 'k' (black)
-        ls: matplotlib linestyle (str)
+        fold_ls: matplotlib linestyle (str)
+            linestyle for net lines that are to be folded
             default = '--' (dashed)
+        cut_ls: matplotlib linestyle (str)
+            linestyle for net lines that are to be cut 
+            (outer lines without glue band)
+            default = '-' (solid)
         label: str
             default = None
         """
-        self.plot_line(self.l1, self.l2, ax, c=c, ls=ls, label=label)
-        self.plot_line(self.j1, self.j2, ax, c=c, ls=ls)
-        self.plot_line(self.l1, self.e1, ax, c=c, ls=ls)
-        self.plot_line(self.h1, self.e2, ax, c=c, ls=ls)
-        self.plot_line(self.h2, self.e3, ax, c=c, ls=ls)
-        self.plot_line(self.h3, self.e4, ax, c=c, ls=ls)
-        self.plot_line(self.h4, self.e5, ax, c=c, ls=ls)
-        self.plot_line(self.h5, self.j2, ax, c=c, ls=ls)
-        self.plot_line(self.l1, self.h1, ax, c=c, ls=ls)
-        self.plot_line(self.j1, self.h2, ax, c=c, ls=ls)
-        self.plot_line(self.e1, self.h3, ax, c=c, ls=ls)
-        self.plot_line(self.e2, self.h4, ax, c=c, ls=ls)
-        self.plot_line(self.e3, self.h5, ax, c=c, ls=ls)
-        self.plot_line(self.e4, self.l2, ax, c=c, ls=ls)
-        self.plot_line(self.e5, self.j2, ax, c=c, ls=ls)
+        self.plot_line(self.l1, self.l2, ax, c=c, ls=fold_ls, label=label)
+        self.plot_line(self.j1, self.j2, ax, c=c, ls=fold_ls)
+        self.plot_line(self.l1, self.e1, ax, c=c, ls=fold_ls)
+        self.plot_line(self.h1, self.e2, ax, c=c, ls=fold_ls)
+        self.plot_line(self.h2, self.e3, ax, c=c, ls=fold_ls)
+        self.plot_line(self.h3, self.e4, ax, c=c, ls=fold_ls)
+        self.plot_line(self.h4, self.e5, ax, c=c, ls=fold_ls)
+        self.plot_line(self.h5, self.j2, ax, c=c, ls=cut_ls)
+        self.plot_line(self.l1, self.h1, ax, c=c, ls=fold_ls)
+        self.plot_line(self.j1, self.d, ax, c=c, ls=fold_ls)
+        self.plot_line(self.d, self.h2, ax, c=c, ls=cut_ls)
+        self.plot_line(self.e1, self.h3, ax, c=c, ls=cut_ls)
+        self.plot_line(self.e2, self.h4, ax, c=c, ls=cut_ls)
+        self.plot_line(self.e3, self.h5, ax, c=c, ls=cut_ls)
+        self.plot_line(self.e4, self.l2, ax, c=c, ls=cut_ls)
+        self.plot_line(self.e5, self.j2, ax, c=c, ls=cut_ls)
     
     def plot_connected_lines(self, nodes, ax, c='k', ls='-', label=None):
         """
@@ -350,7 +356,7 @@ class IcosahedronNet():
                    facecolor=bgc, zorder=0) # lowest zorder drawn first
         
         # Plot icosahedron net and glue bands
-        self.plot_net(ax, c=linec, ls='--', label = 'Fold me')
+        self.plot_net(ax, c=linec, fold_ls='--', cut_ls='-', label = 'Fold me')
         self.plot_glue_bands(ax, w=edge_width, c=linec, ls='-', label='Cut me')
         
         # text for last triangle to glue
