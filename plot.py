@@ -232,7 +232,7 @@ class IcosahedronNet():
           
         
     def plot_point(self, point, ax, c='k', s=2, marker='*', 
-                   label=None, text=None):
+                   label=None, text=None, zorder=0):
         """
         Project a point onto an icosahedron surface, then plot on the net.
         
@@ -271,41 +271,44 @@ class IcosahedronNet():
                 net_points[i] = net_point
                 
         ax.scatter(net_points[0], net_points[1], 
-                   c=c, s=ms, marker=marker, label=label)
+                   c=c, s=ms, marker=marker, label=label, zorder=zorder)
         # plot names for some stars
         if text == 'Sirius':
             ax.text(net_points[0]+0.02, net_points[1]+0.02, text, 
-                    color=c, rotation=60)
+                    color=c, rotation=60, zorder=zorder)
         elif text == 'Vega':
             ax.text(net_points[0]-0.25, net_points[1]+0.1, text, 
-                    color=c, rotation=240)
+                    color=c, rotation=240, zorder=zorder)
         elif text == 'Canopus':
             ax.text(net_points[0]-0.05, net_points[1]+0.05, text, 
-                    color=c, rotation=60)
+                    color=c, rotation=60, zorder=zorder)
         elif text=='Alpha Centauri':
             ax.text(net_points[0]-0.22, net_points[1]+0.12, text, 
-                    color=c, rotation=-60)
+                    color=c, rotation=-60, zorder=zorder)
         elif text=='Arcturus':
             ax.text(net_points[0]-0.22, net_points[1]+0.12, text, 
-                    color=c, rotation=-60)
+                    color=c, rotation=-60, zorder=zorder)
         elif text=='Capella':
             ax.text(net_points[0]-0.22, net_points[1]+0.12, text, 
-                    color=c, rotation=240)
+                    color=c, rotation=240, zorder=zorder)
         elif text=='Rigel':
             ax.text(net_points[0], net_points[1], text, 
-                    color=c, rotation=60)
+                    color=c, rotation=60, zorder=zorder)
         elif text=='Procyon':
             ax.text(net_points[0]-0.2, net_points[1]+0.05, text, 
-                    color=c, rotation=300)
+                    color=c, rotation=300, zorder=zorder)
         elif text=='Achernar':
             ax.text(net_points[0]-0.2, net_points[1], text, 
-                    color=c, rotation=300)
+                    color=c, rotation=300, zorder=zorder)
         elif text=='Betelgeuse':
             ax.text(net_points[0]-0.1, net_points[1]+0.1, text, 
-                    color=c, rotation=60)
+                    color=c, rotation=60, zorder=zorder)
+        elif text=='Polaris':
+            ax.text(net_points[0], net_points[1]+0.1, text, 
+                    color=c, rotation=120, zorder=zorder)
         elif text is not None:
             ax.text(net_points[0], net_points[1], text, 
-                    color=c, rotation=60)
+                    color=c, rotation=60, zorder=zorder)
     
     def make_globe(self, stars=True, poles=True, edge_width=0.4, 
                    starc='w', linec = 'k', bgc='darkblue'):
@@ -360,6 +363,14 @@ class IcosahedronNet():
         ax.text(title_text_pos[0], title_text_pos[1], 'Galaxy paper globe', 
                 rotation=-60, color=starc, fontsize=20)
         
+        # plot north and south poles as dots
+        if poles:
+            north = [0.0, 0.0]
+            south = [np.pi, 0.0]
+            self.plot_point(north, ax, c='r', s=20, marker='o', 
+                            label='North', zorder=1)
+            self.plot_point(south, ax, c='y', s=20, marker='o', 
+                            label='South', zorder=1)
         
         # Load, project and plot stars
         if stars:
@@ -372,15 +383,9 @@ class IcosahedronNet():
                 else:
                     m = 'o'
                     size=30*np.exp(-s.mag)
-                self.plot_point([s.dec, s.ra], ax, 
-                                c=starc, s=size, marker=m, text=s.name) 
+                self.plot_point([s.dec, s.ra], ax, c=starc, s=size, 
+                                marker=m, text=s.name, zorder=2) 
         
-        # plot north and south poles as dots
-        if poles:
-            north = [0.0, 0.0]
-            south = [np.pi, 0.0]
-            self.plot_point(north, ax, c='r', s=20, marker='o', label='North')
-            self.plot_point(south, ax, c='y', s=20, marker='o', label='South')
         
         ax.legend(loc=[0.9, 0.8], fontsize=14)
         ax.axis('off')
