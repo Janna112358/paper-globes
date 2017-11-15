@@ -307,7 +307,7 @@ class IcosahedronNet():
     
     def make_globe(self, stars=True, poles=True, dataDir=None, 
                    fname='paper_globe.pdf', edge_width=0.4, 
-                   starc='w', linec = 'k', bgc='darkblue', bgalpha='1.0'):
+                   starc='w', linec = 'k', bgc='darkblue', bgalpha=1.0):
         """
         Create a figure, plot the net, and plot stars
         
@@ -337,7 +337,7 @@ class IcosahedronNet():
         bgc: matplotlib colour
             colour for background
             default: 'darkblue'
-        """
+        """    
         # set up figure with the right size
         xspan = (self.j2[0] - self.l1[0])
         yspan = (self.h1[1] - self.e1[1])
@@ -365,6 +365,8 @@ class IcosahedronNet():
         title_text_pos = self.node(0.0, 1.0)
         ax.text(title_text_pos[0], title_text_pos[1], 'Galaxy paper globe', 
                 rotation=-60, color=starc, fontsize=20)
+        ax.text(0.0, 0.1, 'github.com/Janna112358/paper-globes',
+                color=starc, fontsize=12)
         
         # plot north and south poles as dots
         if poles:
@@ -495,7 +497,6 @@ class IcosahedronNet():
                         self.v2nets[face.ID], self.v3nets[face.ID])
             ax.scatter(net_point[0], net_point[1], c='k', marker='*')
         fig.savefig('test_points.pdf', bbox_inches='tight')
-
 
 if __name__=="__main__":
     Iconet = IcosahedronNet(scale=1.5)
