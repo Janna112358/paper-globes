@@ -305,7 +305,8 @@ class IcosahedronNet():
             ax.text(net_points[0]+xoff, net_points[1]+yoff, text, 
                     color=textc, rotation=rot, zorder=zorder)
     
-    def make_globe(self, stars=True, poles=True, dataDir=None, edge_width=0.4, 
+    def make_globe(self, stars=True, poles=True, dataDir=None, 
+                   fname='paper_globe.pdf', edge_width=0.4, 
                    starc='w', linec = 'k', bgc='darkblue', bgalpha='1.0'):
         """
         Create a figure, plot the net, and plot stars
@@ -321,6 +322,9 @@ class IcosahedronNet():
         dataDir: str or none
             path to the directory with stars.dat
             if None, assumes stars.dat in the working directory
+        fname: str
+            filename for saving the paper globe
+            default = 'paper_globe.pdf'
         edge_width: float
             width for glue edged of the net, scales with net scale
             default = 0.4
@@ -440,7 +444,7 @@ class IcosahedronNet():
         ax.legend(loc=[0.9, 0.8], fontsize=14)
         ax.axis('off')
         fig.tight_layout()
-        fig.savefig('paper_globe.pdf', bbox_inches='tight', 
+        fig.savefig(fname, bbox_inches='tight', 
                     facecolor=fig.get_facecolor(), edgecolor='none')
         
     def test_points(self, pointc = 'k', linec='k', bgc='w'):
@@ -495,5 +499,5 @@ class IcosahedronNet():
 
 if __name__=="__main__":
     Iconet = IcosahedronNet(scale=1.5)
-    Iconet.make_globe(stars=True, dataDir='.', bgalpha=0.8)
+    Iconet.make_globe(stars=True, dataDir='.')
 
