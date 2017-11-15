@@ -29,5 +29,5 @@ files in this repository are organised as follows
 ```
 
 # Copying
-`mpags-cipher` is licensed under the terms of the MIT License. Please see
+`paper-globes` is licensed under the terms of the MIT License. Please see
 the file [`LICENSE`](LICENSE) for full details.
