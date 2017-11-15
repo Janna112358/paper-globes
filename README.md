@@ -2,7 +2,7 @@
 This software projects a spherical image onto the surfaces of a polyhedron, and plots these unto a net that can be cut-out and folded up to make a paper globe.
 
 The software currently is able to build an icosahedron and project points in spherical coordinates onto it. 
-A globe is build using coordinates and magnitudes of stars (in stars.dat).
+A globe is build using coordinates and magnitudes of stars (in ['stars.dat'](stars.dat)).
 
 # Usage
 Run the file ['plot_globe.py'](plot_globe.py) to make an Icosahedron paper globe. 
@@ -29,5 +29,5 @@ files in this repository are organised as follows
 ```
 
 # Copying
-`mpags-cipher` is licensed under the terms of the MIT License. Please see
+`paper-globes` is licensed under the terms of the MIT License. Please see
 the file [`LICENSE`](LICENSE) for full details.
