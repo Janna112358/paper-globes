@@ -1,7 +1,8 @@
+#!/usr/bin/env python
 import numpy as np
 import matplotlib.pyplot as plt
-from globes.projection2 import Icosahedron
-from import_stars import get_stars
+from globes.projection import Icosahedron
+from globes.import_stars import get_stars
 
 class IcosahedronNet():
     """
@@ -304,8 +305,8 @@ class IcosahedronNet():
             ax.text(net_points[0]+xoff, net_points[1]+yoff, text, 
                     color=textc, rotation=rot, zorder=zorder)
     
-    def make_globe(self, stars=True, poles=True, edge_width=0.4, 
-                   starc='w', linec = 'k', bgc='darkblue'):
+    def make_globe(self, stars=True, poles=True, dataDir=None, edge_width=0.4, 
+                   starc='w', linec = 'k', bgc='darkblue', bgalpha='1.0'):
         """
         Create a figure, plot the net, and plot stars
         
@@ -317,6 +318,9 @@ class IcosahedronNet():
         poles:
             plot dots for north and south pole or not
             default = True
+        dataDir: str or none
+            path to the directory with stars.dat
+            if None, assumes stars.dat in the working directory
         edge_width: float
             width for glue edged of the net, scales with net scale
             default = 0.4
@@ -340,8 +344,9 @@ class IcosahedronNet():
         ax = fig.add_subplot(111)
         ax.set_xlim([-0.55*edge_width*self.scale, xsize])
         ax.set_ylim([0, ysize])
+        # draw background first, so lowest zorder
         ax.axhspan(0.0, yspan, xmin=0.0, xmax=xspan/xsize, 
-                   facecolor=bgc, zorder=0) # lowest zorder drawn first
+                   facecolor=bgc, alpha=bgalpha, zorder=0)
         
         # Plot icosahedron net and glue bands
         self.plot_net(ax, c=linec, fold_ls='--', cut_ls='-', label = 'Fold me')
@@ -368,7 +373,7 @@ class IcosahedronNet():
         
         # Load, project and plot stars
         if stars:
-            stars = get_stars()
+            stars = get_stars(dataDir=dataDir)
             for s in stars:
                 # largest stars with star marker, others with dot
                 if s.mag < 2.5:
@@ -490,6 +495,5 @@ class IcosahedronNet():
 
 if __name__=="__main__":
     Iconet = IcosahedronNet(scale=1.5)
-    Iconet.make_globe(stars=True)
-    #Iconet.test_points()
+    Iconet.make_globe(stars=True, dataDir='.', bgalpha=0.8)
 

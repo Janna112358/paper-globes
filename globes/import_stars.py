@@ -1,11 +1,25 @@
+#!/usr/bin/env python
 from collections import namedtuple
 import csv
 import numpy as np
+import os
+import sys
 
 
-def get_stars():
+def get_stars(dataDir=None):
+    # Get path to stars.dat and check whether is exists
+    if dataDir is None:
+        path = './stars.dat'
+    else:
+        path = os.path.join(dataDir, 'stars.dat')
+    try:
+        assert(os.path.exists(path))
+    except AssertionError:
+        print("[error] Path to stars.dat does not exist: " + path)
+        sys.exit(1)
+        
     # Import data
-    with open('./stars.dat', 'rb') as f:
+    with open(path, 'r') as f:
         data = list(csv.reader(f))
 
     Star = namedtuple('Star', 'ra dec mag name')
@@ -46,4 +60,4 @@ def get_stars():
     return stars
         
 if __name__=="__main__":
-    stars = get_stars()
+    stars = get_stars(dataDir = '..')

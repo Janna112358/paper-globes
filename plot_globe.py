@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from Icosahedron_net import IcosahedronNet
+
+## Settings for your paper globe
+stars_directory = '.'       # (relative) path from this script to the stars.dat file
+scale = 1.5                 # overall size scale
+bgcolour = 'darkblue'       # background colour
+starcolour = 'w'            # colour of the stars
+linecolour = 'k'            # colour of the lines of the net
+# other colours can be found at e.g. https://matplotlib.org/examples/color/named_colors.html
+bgalpha = 1.0               # seethroughness of the background (0 is invisible, 1 is opaque)
+
+
+
+if __name__ == "__main__":
+    Iconet = IcosahedronNet(scale=1.5)
+    Iconet.make_globe(stars=True, dataDir='.', 
+                      bgc=bgcolour, starc=starcolour, linec = linecolour, 
+                      bgalpha=bgalpha)
+
