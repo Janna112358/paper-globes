@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-from globes import projection2 as projection
+from globes import projection as projection
 
 
 def middles_test(ICO):
@@ -35,10 +35,10 @@ def middles_test(ICO):
 
     test = np.allclose(middles, pback_middles, rtol=1.e-12)
     if test:
-        print "Test succesfull, middles projected back onto middles"
+        print("Test succesfull, middles projected back onto middles")
     else:
-        print "Test failed, middles projected back elsewhere than \
-        original middles"
+        print("Test failed, middles projected back elsewhere than" +
+              "original middles")
 
     
 def plot_lcs(ICO):    
