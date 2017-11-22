@@ -246,7 +246,7 @@ class IcosahedronNet():
           
         
     def plot_point(self, point, ax, zorder=0, c='k', s=2, marker='*', 
-                   label=None, text=None, xoff=0., yoff=0., rot=0, textc=None):
+                   label=None, text=None, xoff=0., yoff=0., rot=0, textc=None, texts=10):
         """
         Project a point onto an icosahedron surface, then plot on the net.
         
@@ -287,6 +287,9 @@ class IcosahedronNet():
         textc: matplotlib colour or None
             fot text, colour. If None, use same colour as points
             default = None
+        texts: int
+            for text, fontsize
+            default = 10
         """
         ms = np.array(s) * self.scale
         
@@ -310,11 +313,11 @@ class IcosahedronNet():
             if textc is None:
                 textc = c
             ax.text(net_points[0]+xoff, net_points[1]+yoff, text, 
-                    color=textc, rotation=rot, zorder=zorder)
+                    color=textc, rotation=rot, fontsize=texts, zorder=zorder)
     
     def make_globe(self, stars=True, poles=True, dataDir=None, 
                    fname='paper_globe.pdf', edge_width=0.4, 
-                   starc='w', linec = 'k', bgc='darkblue', bgalpha=1.0):
+                   starc='w', linec = 'k', bgc='darkblue', bgalpha=1.0, texts=12):
         """
         Create a figure, plot the net, and plot stars
         
@@ -344,6 +347,8 @@ class IcosahedronNet():
         bgc: matplotlib colour
             colour for background
             default: 'darkblue'
+        texts: int
+            fontsize for any text on labelled points
         """    
         # set up figure with the right size
         xspan = (self.j2[0] - self.l1[0])
@@ -399,52 +404,52 @@ class IcosahedronNet():
                 # plot names for some stars
                 if s.name == 'Sirius':
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=0.02, yoff=0.02, rot=60)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=0.02, yoff=0.02, rot=60, texts=texts)
                 elif s.name == 'Vega':
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=-0.25, yoff=0.1, rot=240)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=-0.25, yoff=0.1, rot=240, texts=texts)
                 elif s.name == 'Canopus':
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=-0.05, yoff=0.05, rot=60)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=-0.05, yoff=0.05, rot=60, texts=texts)
                 elif s.name=='Alpha Centauri':
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=-0.22, yoff=0.12, rot=-60)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=-0.26, yoff=0.14, rot=-60, texts=texts)
                 elif s.name=='Arcturus':
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=-0.22, yoff=0.12, rot=-60)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=-0.22, yoff=0.12, rot=-60, texts=texts)
                 elif s.name=='Capella':
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=-0.22, yoff=0.12, rot=240)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=-0.24, yoff=0.14, rot=240, texts=texts)
                 elif s.name=='Rigel':
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=0., yoff=0., rot=60)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=0., yoff=0., rot=60, texts=texts)
                 elif s.name=='Procyon':
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=-0.2, yoff=0.05, rot=300)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=-0.2, yoff=0.05, rot=300, texts=texts)
                 elif s.name=='Achernar':
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=-0.2, yoff=0., rot=300)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=-0.2, yoff=0., rot=300, texts=texts)
                 elif s.name=='Betelgeuse':
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=-0.1, yoff=0.1, rot=60)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=-0.14, yoff=0.14, rot=60, texts=texts)
                 elif s.name=='Polaris':
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=0., yoff=0.1, rot=120)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=0., yoff=0.1, rot=120, texts=texts)
                 elif s.name is not None:
                     self.plot_point([s.dec, s.ra], ax, zorder=2,
-                                    c=starc, s=size, marker=m, 
-                                    text=s.name, xoff=0., yoff=0., rot=60)
+                                    c=starc, s=size, marker=m, text=s.name, 
+                                    xoff=0., yoff=0., rot=60, texts=texts)
                 # all cases without names
                 else:
                     self.plot_point([s.dec, s.ra], ax, c=starc, s=size, 
