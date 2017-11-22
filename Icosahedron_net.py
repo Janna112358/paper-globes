@@ -361,7 +361,7 @@ class IcosahedronNet():
         ax.set_xlim([-0.55*edge_width*self.scale, xsize])
         ax.set_ylim([0, ysize])
         # draw background first, so lowest zorder
-        ax.axhspan(0.0, yspan, xmin=0.0, xmax=xspan/xsize, 
+        ax.axhspan(-0.01, yspan+0.01, xmin=-0.01, xmax=xspan/xsize+0.002, 
                    facecolor=bgc, alpha=bgalpha, zorder=0)
         
         # Plot icosahedron net and glue bands
