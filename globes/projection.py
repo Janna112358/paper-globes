@@ -171,8 +171,8 @@ class Face(object):
         b = factor * (cos_angle_v - np.cos(self.angle)*cos_angle_u) / size
         
         # check the lcs coordinates are within the triagle face
-        assert(a >= 0 and b >= 0)
-        assert((a + b) <= 1.0)
+        assert((a >= 0. or np.isclose(a, 0.)) and (b >= 0. or np.isclose(b,0.)))
+        assert((a + b) <= 1.0 or np.isclose(a+b, 1.0))
         return (a, b)
     
     def lcs_to_global(self, point):
