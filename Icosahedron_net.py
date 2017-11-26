@@ -307,7 +307,7 @@ class IcosahedronNet():
                                     self.v2nets[face.ID], self.v3nets[face.ID])
                 net_points[i] = net_point
                 
-        ax.scatter(net_points[0], net_points[1], 
+        ax.scatter(np.take(net_points, 0, axis=-1), np.take(net_points, 1, axis=-1),
                    c=c, s=ms, marker=marker, label=label, zorder=zorder)
         if text is not None:
             if textc is None:
